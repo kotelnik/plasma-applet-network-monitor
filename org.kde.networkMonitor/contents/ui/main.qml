@@ -24,7 +24,7 @@ import org.kde.kcoreaddons 1.0 as KCoreAddons
 Item {
     id: main
     
-    property int itemWidth: 90;
+    property int itemWidth: theme.smallestFont.pixelSize * 6;
 
     Layout.maximumWidth: main.preferredSize.width
     Layout.maximumHeight: Infinity
@@ -78,25 +78,42 @@ Item {
                 id: connectionSvgIcon;
 
                 anchors {
-                    left: parent.left;
-                    verticalCenter: parent.verticalCenter;
+                    right: parent.right
+                    top: parent.top
                 }
+                
+                opacity: 0.3
 
-                height: parent.height * 0.5;
+                height: parent.height;
                 width: height;
                 elementId: ConnectionIcon;
                 svg: PlasmaCore.Svg { multipleImages: true; imagePath: "icons/network" }
             }
             
             Text {
-                text: i18n("⬇ %1/s\n⬆ %2/s",
+                text: DeviceName
+                
+                anchors.top: parent.top
+                anchors.left: parent.left
+                
+                color: theme.textColor
+                
+                font.italic: true
+                font.pointSize: theme.smallestFont.pointSize
+            }
+            
+            Text {
+                id: connectionSpeed
+                
+                text: i18n("⬇%1\n⬆%2",
                             KCoreAddons.Format.formatByteSize(dataSource.data[dataSource.downloadSource].value * 1024 || 0),
                             KCoreAddons.Format.formatByteSize(dataSource.data[dataSource.uploadSource].value * 1024 || 0))
                 color: theme.textColor
-                width: parent.width - connectionSvgIcon.width
+                font.pointSize: theme.smallestFont.pointSize
+                
                 anchors {
-                    left: connectionSvgIcon.right;
-                    verticalCenter: parent.verticalCenter
+                    left: parent.left;
+                    bottom: parent.bottom
                 }
             }
             
