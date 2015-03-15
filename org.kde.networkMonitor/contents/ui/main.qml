@@ -24,100 +24,66 @@ import org.kde.kcoreaddons 1.0 as KCoreAddons
 Item {
     id: main
     
-    property int itemWidth: theme.smallestFont.pixelSize * 6;
-
-    Layout.maximumWidth: main.preferredSize.width
-    Layout.maximumHeight: Infinity
+    property bool vertical: (plasmoid.formFactor == PlasmaCore.Types.Vertical)
+    
+    property int itemWidth: main.vertical ? parent.width : parent.height * 1.5
+    property int itemHeight: main.vertical ? parent.width / 1.5 : parent.height
     
     Layout.minimumWidth: Layout.maximumWidth
     Layout.minimumHeight: Layout.maximumHeight
-
+    
+    Layout.maximumWidth: main.vertical ? parent.width : main.itemWidth * activeNetworksModel.count + main.itemWidth
+    Layout.maximumHeight: main.vertical ? main.itemHeight * activeNetworksModel.count + main.itemHeight : parent.height
+    
+    
     Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
-    Layout.fillHeight: true
     
     anchors.fill: parent
-
+    
     PlasmaNM.NetworkModel {
         id: connectionModel
     }
 
     PlasmaCore.SortFilterModel {
         id: activeNetworksModel
-        filterRole: "ConnectionState"
-        filterRegExp: "2"
+        filterRole: 'ConnectionState'
+        filterRegExp: '2'
         sourceModel: connectionModel
-        onCountChanged: {
-            main.Layout.preferredWidth = count * itemWidth
-        }
     }
     
+    ListView {
+        id: loContainer
+        anchors.top: parent.top
+        anchors.left: parent.left
+        
+        width: main.itemWidth
+        height: main.itemHeight
+        
+        orientation: main.vertical ? ListView.Vertical : ListView.Horizontal
+        
+        model: ListModel {
+            ListElement {
+                DeviceName: 'lo'
+            }
+        }
+        
+        delegate: ActiveConnection {}
+    }
     
     ListView {
         id: networkList
-        anchors.fill: parent
-        orientation: ListView.Horizontal
+        anchors.top: (main.vertical && loContainer.visible) ? loContainer.bottom : parent.top
+        anchors.left: (!main.vertical && loContainer.visible) ? loContainer.right : parent.left
+        
+        orientation: main.vertical ? ListView.Vertical : ListView.Horizontal
+        
+        width: main.vertical ? itemWidth : itemWidth * activeNetworksModel.count
+        height: main.vertical ? itemHeight * activeNetworksModel.count : itemHeight
         
         model: activeNetworksModel
         
-        delegate: Item {
-            height: main.height
-            width: itemWidth
-            
-            PlasmaCore.DataSource {
-                id: dataSource;
-
-                property string downloadSource: "network/interfaces/" + DeviceName + "/receiver/data";
-                property string uploadSource: "network/interfaces/" + DeviceName + "/transmitter/data";
-
-                engine: "systemmonitor";
-                connectedSources: [downloadSource, uploadSource];
-                interval: 1000;
-            }
-            
-            PlasmaCore.SvgItem {
-                id: connectionSvgIcon;
-
-                anchors {
-                    right: parent.right
-                    top: parent.top
-                }
-                
-                opacity: 0.3
-
-                height: parent.height;
-                width: height;
-                elementId: ConnectionIcon;
-                svg: PlasmaCore.Svg { multipleImages: true; imagePath: "icons/network" }
-            }
-            
-            Text {
-                text: DeviceName
-                
-                anchors.top: parent.top
-                anchors.left: parent.left
-                
-                color: theme.textColor
-                
-                font.italic: true
-                font.pointSize: theme.smallestFont.pointSize
-            }
-            
-            Text {
-                id: connectionSpeed
-                
-                text: i18n("⬇%1\n⬆%2",
-                            KCoreAddons.Format.formatByteSize(dataSource.data[dataSource.downloadSource].value * 1024 || 0),
-                            KCoreAddons.Format.formatByteSize(dataSource.data[dataSource.uploadSource].value * 1024 || 0))
-                color: theme.textColor
-                font.pointSize: theme.smallestFont.pointSize
-                
-                anchors {
-                    left: parent.left;
-                    bottom: parent.bottom
-                }
-            }
-            
-        }
+        delegate: ActiveConnection {}
     }
+    
     
 }
