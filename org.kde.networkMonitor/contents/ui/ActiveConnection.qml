@@ -29,6 +29,48 @@ Item {
     
     property double fontPointSize: height * 0.185
     
+    function formatBytes(bytes) {
+        var localBytes = bytes;
+        var suffix = 'B';
+        if (localBytes >= 1024) {
+            localBytes = localBytes / 1024;
+            suffix = 'K';
+        } else {
+            return formatSize(localBytes, suffix);
+        }
+        if (localBytes >= 1024) {
+            localBytes = localBytes / 1024;
+            suffix = 'M';
+        } else {
+            return formatSize(localBytes, suffix);
+        }
+        if (localBytes >= 1024) {
+            localBytes = localBytes / 1024;
+            suffix = 'G';
+        } else {
+            return formatSize(localBytes, suffix);
+        }
+        if (localBytes >= 1024) {
+            localBytes = localBytes / 1024;
+            suffix = 'T';
+        } else {
+            return formatSize(localBytes, suffix);
+        }
+        return formatSize(localBytes, suffix);
+    }
+    
+    function formatSize(size, suffix) {
+        var localSizeInt = parseInt(size);
+        var resultStr = String(localSizeInt);
+        if (localSizeInt < 1000 && suffix !== 'B' && size > localSizeInt) {
+            var decimal = parseInt((size * 10) - (localSizeInt * 10));
+            if (decimal > 0) {
+                resultStr += '.';
+                resultStr += decimal;
+            }
+        }
+        return resultStr + suffix;
+    }
     
     PlasmaCore.DataSource {
         id: dataSource
@@ -41,9 +83,15 @@ Item {
         interval: 1000
         
         onNewData: {
-            connectionSpeed.text = i18n('⬇%1\n⬆%2',
-                    KCoreAddons.Format.formatByteSize(dataSource.data[dataSource.downloadSource].value * 1024 || 0),
-                    KCoreAddons.Format.formatByteSize(dataSource.data[dataSource.uploadSource].value * 1024 || 0))
+            var downBytes = dataSource.data[dataSource.downloadSource].value * 1024 || 0;
+            var upBytes = dataSource.data[dataSource.uploadSource].value * 1024 || 0;
+            
+            //testing TODO delete
+//             var downBytes = 1023;
+//             var upBytes = 102*1024 + 3;
+            
+            connectionSpeedDownload.text = formatBytes(downBytes)
+            connectionSpeedUpload.text = formatBytes(upBytes)
         }
         
         //for new and instantly connected sources
@@ -76,27 +124,62 @@ Item {
     }
     
     Text {
+        id: deviceNameText
         text: DeviceName
         
         anchors.top: parent.top
         anchors.left: parent.left
         
         color: theme.textColor
-        opacity: 0.8
+        opacity: 0.9
         
         font.italic: true
+        font.pointSize: fontPointSize
+        
+        scale: paintedWidth > parent.width ? (parent.width / paintedWidth) : 1
+        transformOrigin: Item.TopLeft
+    }
+    
+    Text {
+        id: downloadIcon
+        anchors {
+            left: parent.left;
+            verticalCenter: parent.verticalCenter
+        }
+        text: '⬇'
+        color: theme.textColor
         font.pointSize: fontPointSize
     }
     
     Text {
-        id: connectionSpeed
-        
+        id: connectionSpeedDownload
+        anchors {
+            right: parent.right;
+            verticalCenter: parent.verticalCenter
+        }
+        text: '_'
+        color: theme.textColor
+        font.pointSize: fontPointSize
+    }
+    
+    Text {
+        id: uploadIcon
         anchors {
             left: parent.left;
             bottom: parent.bottom
         }
-        
-        text: i18n('Waiting...\nWaiting...')
+        text: '⬆'
+        color: theme.textColor
+        font.pointSize: fontPointSize
+    }
+    
+    Text {
+        id: connectionSpeedUpload
+        anchors {
+            right: parent.right;
+            bottom: parent.bottom
+        }
+        text: '_'
         color: theme.textColor
         font.pointSize: fontPointSize
     }

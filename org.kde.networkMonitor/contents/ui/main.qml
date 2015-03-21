@@ -26,14 +26,17 @@ Item {
     
     property bool vertical: (plasmoid.formFactor == PlasmaCore.Types.Vertical)
     
-    property int itemWidth: main.vertical ? parent.width : parent.height * 1.5
-    property int itemHeight: main.vertical ? parent.width / 1.5 : parent.height
+    property int itemWidth: main.vertical ? parent.width : parent.height
+    property int itemHeight: main.vertical ? parent.width : parent.height
+    property int itemMargin: 5
+    
+    property bool showLo: plasmoid.configuration.showLo
     
     Layout.minimumWidth: Layout.maximumWidth
     Layout.minimumHeight: Layout.maximumHeight
     
-    Layout.maximumWidth: main.vertical ? parent.width : main.itemWidth * activeNetworksModel.count + main.itemWidth
-    Layout.maximumHeight: main.vertical ? main.itemHeight * activeNetworksModel.count + main.itemHeight : parent.height
+    Layout.maximumWidth: main.vertical ? parent.width : (main.itemWidth + itemMargin) * activeNetworksModel.count + (activeNetworksModel.count > 0 ? -itemMargin : 0) + (showLo ? main.itemWidth + itemMargin : 0)
+    Layout.maximumHeight: main.vertical ? (main.itemHeight + itemMargin) * activeNetworksModel.count + (activeNetworksModel.count > 0 ? -itemMargin : 0) + (showLo ? main.itemHeight + itemMargin : 0) : parent.height
     
     
     Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
@@ -59,6 +62,8 @@ Item {
         width: main.itemWidth
         height: main.itemHeight
         
+        visible: showLo
+        
         orientation: main.vertical ? ListView.Vertical : ListView.Horizontal
         
         model: ListModel {
@@ -74,8 +79,12 @@ Item {
         id: networkList
         anchors.top: (main.vertical && loContainer.visible) ? loContainer.bottom : parent.top
         anchors.left: (!main.vertical && loContainer.visible) ? loContainer.right : parent.left
+        anchors.leftMargin: showLo && !vertical ? itemMargin : 0
+        anchors.topMargin: showLo && vertical ? itemMargin : 0
         
         orientation: main.vertical ? ListView.Vertical : ListView.Horizontal
+        
+        spacing: itemMargin
         
         width: main.vertical ? itemWidth : itemWidth * activeNetworksModel.count
         height: main.vertical ? itemHeight * activeNetworksModel.count : itemHeight
