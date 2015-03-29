@@ -3,12 +3,27 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
       http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
-  <kcfgfile name=""/>
+    <kcfgfile name=""/>
 
-  <group name="General">
-    <entry name="showLo" type="Bool">
-      <default>true</default>
-    </entry>
-  </group>
+    <group name="General">
+        <entry name="showLo" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="updateInterval" type="Double">
+            <default>1.0</default>
+        </entry>
+    </group>
+    
+    <group name="Appearance">
+        <entry name="iconOpacity" type="Double">
+            <default>0.7</default>
+        </entry>
+        <entry name="blurredIcons" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="showDeviceNames" type="Bool">
+            <default>true</default>
+        </entry>
+    </group>
 
 </kcfg>

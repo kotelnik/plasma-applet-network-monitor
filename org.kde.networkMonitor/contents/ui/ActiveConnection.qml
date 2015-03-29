@@ -16,6 +16,7 @@
  */
 import QtQuick 2.2
 import QtQuick.Layouts 1.1
+import QtGraphicalEffects 1.0
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
@@ -27,7 +28,7 @@ Item {
     width: main.itemWidth
     height: main.itemHeight
     
-    property double fontPointSize: height * 0.185
+    property double fontPointSize: height * 0.195 * (main.showDeviceNames ? 1 : 1.25)
     
     function formatBytes(bytes) {
         var localBytes = bytes;
@@ -80,7 +81,7 @@ Item {
 
         engine: 'systemmonitor'
         connectedSources: [downloadSource, uploadSource]
-        interval: 1000
+        interval: main.updateInterval
         
         onNewData: {
             var downBytes = dataSource.data[dataSource.downloadSource].value * 1024 || 0;
@@ -107,20 +108,26 @@ Item {
     PlasmaCore.SvgItem {
         id: connectionSvgIcon;
 
-        anchors {
-            right: parent.right
-            top: parent.top
-        }
+        anchors.centerIn: parent
         
-        opacity: 0.3
+        opacity: main.iconOpacity
+        visible: !main.blurredIcons
 
-        height: parent.height;
+        height: parent.height * (main.blurredIcons ? 0.3 : 1);
         width: height;
         elementId: ConnectionIcon;
         svg: PlasmaCore.Svg {
             multipleImages: true
             imagePath: 'icons/network'
         }
+    }
+    
+    FastBlur {
+        anchors.fill: parent
+        source: connectionSvgIcon
+        opacity: main.iconOpacity
+        radius: 16
+        visible: main.blurredIcons
     }
     
     Text {
@@ -137,50 +144,63 @@ Item {
         font.pointSize: fontPointSize
         
         scale: paintedWidth > parent.width ? (parent.width / paintedWidth) : 1
-        transformOrigin: Item.TopLeft
+        transformOrigin: Item.Left
+        
+        visible: main.showDeviceNames
     }
     
-    Text {
-        id: downloadIcon
-        anchors {
-            left: parent.left;
-            verticalCenter: parent.verticalCenter
+    Item {
+        id: speedsContainer
+        width: parent.width
+        height: parent.height * (main.showDeviceNames ? (2/3) : 0.8)
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: main.showDeviceNames ? 0 : parent.height * 0.1
+        
+        Text {
+            id: uploadIcon
+            anchors {
+                left: parent.left;
+                top: parent.top
+            }
+            text: '⬆'
+            color: theme.textColor
+            font.pointSize: fontPointSize
+            visible: main.showDeviceNames
         }
-        text: '⬇'
-        color: theme.textColor
-        font.pointSize: fontPointSize
+        
+        Text {
+            id: connectionSpeedUpload
+            anchors {
+                right: parent.right;
+                top: parent.top
+            }
+            text: '_'
+            color: theme.textColor
+            font.pointSize: fontPointSize
+        }
+        
+        Text {
+            id: downloadIcon
+            anchors {
+                left: parent.left;
+                bottom: parent.bottom
+            }
+            text: '⬇'
+            color: theme.textColor
+            font.pointSize: fontPointSize
+            visible: main.showDeviceNames
+        }
+        
+        Text {
+            id: connectionSpeedDownload
+            anchors {
+                right: parent.right;
+                bottom: parent.bottom
+            }
+            text: '_'
+            color: theme.textColor
+            font.pointSize: fontPointSize
+        }
     }
     
-    Text {
-        id: connectionSpeedDownload
-        anchors {
-            right: parent.right;
-            verticalCenter: parent.verticalCenter
-        }
-        text: '_'
-        color: theme.textColor
-        font.pointSize: fontPointSize
-    }
-    
-    Text {
-        id: uploadIcon
-        anchors {
-            left: parent.left;
-            bottom: parent.bottom
-        }
-        text: '⬆'
-        color: theme.textColor
-        font.pointSize: fontPointSize
-    }
-    
-    Text {
-        id: connectionSpeedUpload
-        anchors {
-            right: parent.right;
-            bottom: parent.bottom
-        }
-        text: '_'
-        color: theme.textColor
-        font.pointSize: fontPointSize
-    }
 }

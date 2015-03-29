@@ -1,11 +1,11 @@
 # Maintainer: Martin Kostolný <clearmartin at zoho dot com>
 
-pkgname=plasma-applet-netowk-monitor-git
-_pkgname=plasma-applet-netowk-monitor
-pkgver=r5.a0a4912
+pkgname=plasma-applet-network-monitor-git
+_pkgname=plasma-applet-network-monitor
+pkgver=r6.751673a
 pkgrel=1
 pkgdesc="Plasmoid for Plasma 5. Shows network speed of currently active connections."
-arch=('i686' 'x86_64')
+arch=('any')
 url="https://github.com/kotelnik/plasma-applet-network-monitor"
 license=('GPL')
 depends=('plasma-workspace' 'extra-cmake-modules')

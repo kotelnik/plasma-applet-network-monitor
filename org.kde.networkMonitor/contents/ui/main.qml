@@ -30,13 +30,20 @@ Item {
     property int itemHeight: main.vertical ? parent.width : parent.height
     property int itemMargin: 5
     
+    // general settings
     property bool showLo: plasmoid.configuration.showLo
+    property double updateInterval: plasmoid.configuration.updateInterval * 1000
+    
+    // appearance settings
+    property double iconOpacity: plasmoid.configuration.iconOpacity
+    property bool blurredIcons: plasmoid.configuration.blurredIcons
+    property bool showDeviceNames: plasmoid.configuration.showDeviceNames
     
     Layout.minimumWidth: Layout.maximumWidth
     Layout.minimumHeight: Layout.maximumHeight
     
-    Layout.maximumWidth: main.vertical ? parent.width : (main.itemWidth + itemMargin) * activeNetworksModel.count + (activeNetworksModel.count > 0 ? -itemMargin : 0) + (showLo ? main.itemWidth + itemMargin : 0)
-    Layout.maximumHeight: main.vertical ? (main.itemHeight + itemMargin) * activeNetworksModel.count + (activeNetworksModel.count > 0 ? -itemMargin : 0) + (showLo ? main.itemHeight + itemMargin : 0) : parent.height
+    Layout.maximumWidth: main.vertical ? parent.width : (main.itemWidth + itemMargin) * filteredByNameModel.count + (filteredByNameModel.count > 0 ? -itemMargin : 0) + (showLo ? main.itemWidth + itemMargin : 0)
+    Layout.maximumHeight: main.vertical ? (main.itemHeight + itemMargin) * filteredByNameModel.count + (filteredByNameModel.count > 0 ? -itemMargin : 0) + (showLo ? main.itemHeight + itemMargin : 0) : parent.height
     
     
     Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
@@ -48,11 +55,21 @@ Item {
     }
 
     PlasmaCore.SortFilterModel {
-        id: activeNetworksModel
+        //id: activeNetworksModel
+        id: filteredByNameModel
         filterRole: 'ConnectionState'
         filterRegExp: '2'
         sourceModel: connectionModel
     }
+
+    //TODO blacklist filter
+    //TODO why negative assertion is not working?
+//     PlasmaCore.SortFilterModel {
+//         id: filteredByNameModel
+//         filterRole: 'DeviceName'
+//         filterRegExp: '(?!wlp3s0)|(?!enp0s20u2)'
+//         sourceModel: activeNetworksModel
+//     }
     
     ListView {
         id: loContainer
@@ -86,10 +103,10 @@ Item {
         
         spacing: itemMargin
         
-        width: main.vertical ? itemWidth : itemWidth * activeNetworksModel.count
-        height: main.vertical ? itemHeight * activeNetworksModel.count : itemHeight
+        width: main.vertical ? itemWidth : itemWidth * filteredByNameModel.count
+        height: main.vertical ? itemHeight * filteredByNameModel.count : itemHeight
         
-        model: activeNetworksModel
+        model: filteredByNameModel
         
         delegate: ActiveConnection {}
     }

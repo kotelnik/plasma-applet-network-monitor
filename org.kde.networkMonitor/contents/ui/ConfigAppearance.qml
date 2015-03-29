@@ -25,17 +25,33 @@ Item {
     width: childrenRect.width
     height: childrenRect.height
 
-    property alias cfg_showLo: showLo.checked
-    property alias cfg_updateInterval: updateIntervalSpinBox.value
+    property alias cfg_iconOpacity: iconOpacity.value
+    property alias cfg_blurredIcons: blurredIcons.checked
+    property alias cfg_showDeviceNames: showDeviceNames.checked
 
     GridLayout {
         Layout.fillWidth: true
         columns: 2
+        
+        Label {
+            text: i18n('Icon opacity:')
+            Layout.alignment: Qt.AlignVCenter|Qt.AlignLeft
+            Layout.columnSpan: 2
+        }
+        Slider {
+            id: iconOpacity
+            stepSize: 0.05
+            minimumValue: 0
+            value: 0.3
+            tickmarksEnabled: true
+            width: parent.width
+            Layout.columnSpan: 2
+        }
 
         CheckBox {
-            id: showLo
+            id: blurredIcons
             Layout.columnSpan: 2
-            text: i18n('Show loopback')
+            text: i18n('Blurred icons')
         }
         
         Item {
@@ -44,17 +60,12 @@ Item {
             Layout.columnSpan: 2
         }
         
-        Label {
-            text: i18n('Update interval:')
-            Layout.alignment: Qt.AlignRight
+        CheckBox {
+            id: showDeviceNames
+            Layout.columnSpan: 2
+            text: i18n('Show device names')
         }
-        SpinBox {
-            id: updateIntervalSpinBox
-            decimals: 1
-            stepSize: 0.1
-            minimumValue: 0.1
-            suffix: i18nc('Abbreviation for seconds', 's')
-        }
+        
     }
     
 }
