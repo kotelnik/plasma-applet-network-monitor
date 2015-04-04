@@ -111,9 +111,9 @@ Item {
         anchors.centerIn: parent
         
         opacity: main.iconOpacity
-        visible: !main.blurredIcons
+        visible: false
 
-        height: parent.height * (main.blurredIcons ? 0.3 : 1);
+        height: parent.height * (1 - (main.iconBlur / 30));
         width: height;
         elementId: ConnectionIcon;
         svg: PlasmaCore.Svg {
@@ -126,8 +126,7 @@ Item {
         anchors.fill: parent
         source: connectionSvgIcon
         opacity: main.iconOpacity
-        radius: 16
-        visible: main.blurredIcons
+        radius: main.iconBlur
     }
     
     Text {

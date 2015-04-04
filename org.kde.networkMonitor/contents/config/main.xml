@@ -18,8 +18,8 @@
         <entry name="iconOpacity" type="Double">
             <default>0.7</default>
         </entry>
-        <entry name="blurredIcons" type="Bool">
-            <default>true</default>
+        <entry name="iconBlur" type="Double">
+            <default>14</default>
         </entry>
         <entry name="showDeviceNames" type="Bool">
             <default>true</default>

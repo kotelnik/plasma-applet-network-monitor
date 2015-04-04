@@ -36,7 +36,7 @@ Item {
     
     // appearance settings
     property double iconOpacity: plasmoid.configuration.iconOpacity
-    property bool blurredIcons: plasmoid.configuration.blurredIcons
+    property double iconBlur: plasmoid.configuration.iconBlur
     property bool showDeviceNames: plasmoid.configuration.showDeviceNames
     
     Layout.minimumWidth: Layout.maximumWidth

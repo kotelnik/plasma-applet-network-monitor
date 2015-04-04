@@ -26,7 +26,7 @@ Item {
     height: childrenRect.height
 
     property alias cfg_iconOpacity: iconOpacity.value
-    property alias cfg_blurredIcons: blurredIcons.checked
+    property alias cfg_iconBlur: iconBlur.value
     property alias cfg_showDeviceNames: showDeviceNames.checked
 
     GridLayout {
@@ -47,13 +47,21 @@ Item {
             width: parent.width
             Layout.columnSpan: 2
         }
-
-        CheckBox {
-            id: blurredIcons
-            Layout.columnSpan: 2
-            text: i18n('Blurred icons')
-        }
         
+        Label {
+            text: i18n('Icon blur:')
+            Layout.alignment: Qt.AlignVCenter|Qt.AlignLeft
+            Layout.columnSpan: 2
+        }
+        Slider {
+            id: iconBlur
+            stepSize: 1
+            minimumValue: 0
+            maximumValue: 20
+            width: parent.width
+            Layout.columnSpan: 2
+        }
+
         Item {
             width: 2
             height: 10
