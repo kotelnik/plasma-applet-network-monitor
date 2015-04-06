@@ -12,6 +12,9 @@
         <entry name="updateInterval" type="Double">
             <default>1.0</default>
         </entry>
+        <entry name="historyGraphsEnabled" type="Bool">
+            <default>true</default>
+        </entry>
     </group>
     
     <group name="Appearance">

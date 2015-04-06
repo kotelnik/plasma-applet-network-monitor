@@ -38,6 +38,7 @@ Item {
     property double iconOpacity: plasmoid.configuration.iconOpacity
     property double iconBlur: plasmoid.configuration.iconBlur
     property bool showDeviceNames: plasmoid.configuration.showDeviceNames
+    property bool historyGraphsEnabled: plasmoid.configuration.historyGraphsEnabled
     
     Layout.minimumWidth: Layout.maximumWidth
     Layout.minimumHeight: Layout.maximumHeight
@@ -81,6 +82,7 @@ Item {
         
         visible: showLo
         
+        interactive: true
         orientation: main.vertical ? ListView.Vertical : ListView.Horizontal
         
         model: ListModel {

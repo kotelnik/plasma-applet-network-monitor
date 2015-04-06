@@ -21,6 +21,7 @@ import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
 import org.kde.kcoreaddons 1.0 as KCoreAddons
+import "../code/helper.js" as Helper
 
 Item {
     id: activeConnection
@@ -29,6 +30,7 @@ Item {
     height: main.itemHeight
     
     property double fontPointSize: height * 0.195 * (main.showDeviceNames ? 1 : 1.25)
+    property int graphGranularity: 20
     
     function formatBytes(bytes) {
         var localBytes = bytes;
@@ -73,6 +75,22 @@ Item {
         return resultStr + suffix;
     }
     
+    ListModel {
+        id: downloadHistoryGraphModel
+        
+        property int maxBytes: 0
+        property int maxBytesModelIndex: 0
+        property int lowerMaxBytesInMs: -1
+    }
+    
+    ListModel {
+        id: uploadHistoryGraphModel
+        
+        property int maxBytes: 0
+        property int maxBytesModelIndex: 0
+        property int lowerMaxBytesInMs: -1
+    }
+    
     PlasmaCore.DataSource {
         id: dataSource
         
@@ -93,6 +111,16 @@ Item {
             
             connectionSpeedDownload.text = formatBytes(downBytes)
             connectionSpeedUpload.text = formatBytes(upBytes)
+
+            //
+            // history graph
+            //
+            if (!historyGraphsEnabled || sourceName === downloadSource) {
+                return
+            }
+            
+            Helper.addSpeedData(downBytes, downloadHistoryGraphModel, graphGranularity, main.itemHeight, 1)
+            Helper.addSpeedData(upBytes, uploadHistoryGraphModel, graphGranularity, main.itemHeight, uploadHistoryGraphModel.maxBytes / downloadHistoryGraphModel.maxBytes)
         }
         
         //for new and instantly connected sources
@@ -127,6 +155,20 @@ Item {
         source: connectionSvgIcon
         opacity: main.iconOpacity
         radius: main.iconBlur
+    }
+    
+    HistoryGraph {
+        listViewModel: downloadHistoryGraphModel
+        barColor: theme.highlightColor
+        opacity: 0.5
+        visible: historyGraphsEnabled
+    }
+    
+    HistoryGraph {
+        listViewModel: uploadHistoryGraphModel
+        barColor: '#FF0000'
+        opacity: 0.5
+        visible: historyGraphsEnabled
     }
     
     Text {
@@ -200,6 +242,17 @@ Item {
             color: theme.textColor
             font.pointSize: fontPointSize
         }
+    }
+    
+    DropShadow {
+        anchors.fill: speedsContainer
+        radius: 3
+        samples: 8
+        spread: 0.8
+        fast: true
+        color: theme.backgroundColor
+        source: speedsContainer
+        visible: historyGraphsEnabled
     }
     
 }
