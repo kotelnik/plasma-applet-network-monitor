@@ -5,11 +5,16 @@ ConfigModel {
     ConfigCategory {
          name: i18n('General')
          icon: 'preferences-system-windows'
-         source: 'ConfigGeneral.qml'
+         source: 'config/ConfigGeneral.qml'
+    }
+    ConfigCategory {
+         name: i18n('Filter')
+         icon: 'preferences-system-other'
+         source: 'config/ConfigFilter.qml'
     }
     ConfigCategory {
          name: i18n('Appearance')
          icon: 'preferences-desktop-color'
-         source: 'ConfigAppearance.qml'
+         source: 'config/ConfigAppearance.qml'
     }
 }

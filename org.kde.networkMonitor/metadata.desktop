@@ -14,7 +14,7 @@ X-KDE-ServiceTypes=Plasma/Applet
 X-Plasma-API=declarativeappletscript
 X-Plasma-MainScript=ui/main.qml
 X-Plasma-RemoteLocation=
-X-KDE-PluginInfo-Category=Networking
+X-KDE-PluginInfo-Category=System Information
 Icon=network-connect
 #prefix for Icon is: /usr/share/icons/breeze/actions/toolbar/
 #copy this file into ~/.local/share/kservices5

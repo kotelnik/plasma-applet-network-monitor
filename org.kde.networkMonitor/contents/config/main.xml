@@ -17,6 +17,23 @@
         </entry>
     </group>
     
+    <group name="Filter">
+        <entry name="deviceFilterType" type="Enum">
+            <choices>
+                <choice name="Off"/>
+                <choice name="WhiteList"/>
+                <choice name="BlackList"/>
+            </choices>
+            <default>0</default>
+        </entry>
+        <entry name="deviceWhiteListRegexp" type="String">
+            <default>wlan0|eth0</default>
+        </entry>
+        <entry name="deviceBlackListRegexp" type="String">
+            <default>tun0|ham0</default>
+        </entry>
+    </group>
+    
     <group name="Appearance">
         <entry name="iconOpacity" type="Double">
             <default>0.7</default>

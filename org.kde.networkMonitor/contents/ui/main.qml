@@ -34,6 +34,11 @@ Item {
     property bool showLo: plasmoid.configuration.showLo
     property double updateInterval: plasmoid.configuration.updateInterval * 1000
     
+    // filter settings
+    property int deviceFilterType: plasmoid.configuration.deviceFilterType
+    property string deviceWhiteListRegexp: '^(' + plasmoid.configuration.deviceWhiteListRegexp + ')$'
+    property string deviceBlackListRegexp: '^(?!(' + plasmoid.configuration.deviceBlackListRegexp + '))'
+    
     // appearance settings
     property double iconOpacity: plasmoid.configuration.iconOpacity
     property double iconBlur: plasmoid.configuration.iconBlur
@@ -56,21 +61,18 @@ Item {
     }
 
     PlasmaCore.SortFilterModel {
-        //id: activeNetworksModel
-        id: filteredByNameModel
+        id: activeNetworksModel
         filterRole: 'ConnectionState'
         filterRegExp: '2'
         sourceModel: connectionModel
     }
 
-    //TODO blacklist filter
-    //TODO why negative assertion is not working?
-//     PlasmaCore.SortFilterModel {
-//         id: filteredByNameModel
-//         filterRole: 'DeviceName'
-//         filterRegExp: '(?!wlp3s0)|(?!enp0s20u2)'
-//         sourceModel: activeNetworksModel
-//     }
+    PlasmaCore.SortFilterModel {
+        id: filteredByNameModel
+        filterRole: 'DeviceName'
+        filterRegExp: deviceFilterType === 0 ? '' : deviceFilterType === 1 ? deviceWhiteListRegexp  : deviceBlackListRegexp
+        sourceModel: activeNetworksModel
+    }
     
     ListView {
         id: loContainer
