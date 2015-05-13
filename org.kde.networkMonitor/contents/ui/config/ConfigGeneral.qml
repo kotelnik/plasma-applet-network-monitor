@@ -6,7 +6,6 @@ Item {
     width: childrenRect.width
     height: childrenRect.height
 
-    property alias cfg_showLo: showLo.checked
     property alias cfg_updateInterval: updateIntervalSpinBox.value
     property alias cfg_historyGraphsEnabled: historyGraphsEnabled.checked
 
@@ -14,18 +13,6 @@ Item {
         Layout.fillWidth: true
         columns: 2
 
-        CheckBox {
-            id: showLo
-            Layout.columnSpan: 2
-            text: i18n('Show loopback')
-        }
-        
-        Item {
-            width: 2
-            height: 10
-            Layout.columnSpan: 2
-        }
-        
         Label {
             text: i18n('Update interval:')
             Layout.alignment: Qt.AlignRight

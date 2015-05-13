@@ -8,6 +8,8 @@ Item {
     
     property int textfieldWidth: 200
     
+    property alias cfg_showLo: showLo.checked
+    
     property int cfg_deviceFilterType
     property alias cfg_deviceWhiteListRegexp: deviceWhiteListRegexp.text
     property alias cfg_deviceBlackListRegexp: deviceBlackListRegexp.text
@@ -33,6 +35,18 @@ Item {
     GridLayout {
         Layout.fillWidth: true
         columns: 3
+        
+        CheckBox {
+            id: showLo
+            text: i18n('Show loopback')
+            Layout.columnSpan: 3
+        }
+        
+        Item {
+            width: 2
+            height: 10
+            Layout.columnSpan: 3
+        }
 
         RadioButton {
             id: deviceFilterTypeRadioOff

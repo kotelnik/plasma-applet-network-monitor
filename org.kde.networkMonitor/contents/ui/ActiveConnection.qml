@@ -31,6 +31,7 @@ Item {
     
     property double fontPointSize: height * 0.195 * (main.showDeviceNames ? 1 : 1.25)
     property int graphGranularity: 20
+    property bool noConnection: false
     
     function formatBytes(bytes) {
         var localBytes = bytes;
@@ -105,10 +106,6 @@ Item {
             var downBytes = dataSource.data[dataSource.downloadSource].value * 1024 || 0;
             var upBytes = dataSource.data[dataSource.uploadSource].value * 1024 || 0;
             
-            //testing TODO delete
-//             var downBytes = 1023;
-//             var upBytes = 102*1024 + 3;
-            
             connectionSpeedDownload.text = formatBytes(downBytes)
             connectionSpeedUpload.text = formatBytes(upBytes)
 
@@ -133,12 +130,25 @@ Item {
         }
     }
     
+    Image {
+        id: noConnectionIcon;
+
+        anchors.centerIn: parent
+        
+        opacity: main.iconOpacity
+        visible: false
+
+        height: parent.height * (1 - (main.iconBlur / 30));
+        width: height;
+        
+        source: 'plasmapackage:/images/network-disconnect.svg'
+    }
+    
     PlasmaCore.SvgItem {
         id: connectionSvgIcon;
 
         anchors.centerIn: parent
         
-        opacity: main.iconOpacity
         visible: false
 
         height: parent.height * (1 - (main.iconBlur / 30));
@@ -152,7 +162,7 @@ Item {
     
     FastBlur {
         anchors.fill: parent
-        source: connectionSvgIcon
+        source: noConnection ? noConnectionIcon : connectionSvgIcon
         opacity: main.iconOpacity
         radius: main.iconBlur
     }
@@ -161,14 +171,14 @@ Item {
         listViewModel: downloadHistoryGraphModel
         barColor: theme.highlightColor
         opacity: 0.5
-        visible: historyGraphsEnabled
+        visible: !noConnection && historyGraphsEnabled
     }
     
     HistoryGraph {
         listViewModel: uploadHistoryGraphModel
         barColor: '#FF0000'
         opacity: 0.5
-        visible: historyGraphsEnabled
+        visible: !noConnection && historyGraphsEnabled
     }
     
     Text {
@@ -187,7 +197,7 @@ Item {
         scale: paintedWidth > parent.width ? (parent.width / paintedWidth) : 1
         transformOrigin: Item.Left
         
-        visible: main.showDeviceNames
+        visible: !noConnection && main.showDeviceNames
     }
     
     Item {
@@ -196,6 +206,8 @@ Item {
         height: parent.height * (main.showDeviceNames ? (2/3) : 0.8)
         anchors.bottom: parent.bottom
         anchors.bottomMargin: main.showDeviceNames ? 0 : parent.height * 0.1
+        
+        visible: !noConnection
         
         Text {
             id: uploadIcon
@@ -252,7 +264,7 @@ Item {
         fast: true
         color: theme.backgroundColor
         source: speedsContainer
-        visible: historyGraphsEnabled
+        visible: !noConnection && historyGraphsEnabled
     }
     
 }

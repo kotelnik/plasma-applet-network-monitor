@@ -48,8 +48,8 @@ Item {
     Layout.minimumWidth: Layout.maximumWidth
     Layout.minimumHeight: Layout.maximumHeight
     
-    Layout.maximumWidth: main.vertical ? parent.width : (main.itemWidth + itemMargin) * filteredByNameModel.count + (filteredByNameModel.count > 0 ? -itemMargin : 0) + (showLo ? main.itemWidth + itemMargin : 0)
-    Layout.maximumHeight: main.vertical ? (main.itemHeight + itemMargin) * filteredByNameModel.count + (filteredByNameModel.count > 0 ? -itemMargin : 0) + (showLo ? main.itemHeight + itemMargin : 0) : parent.height
+    Layout.maximumWidth:   main.vertical ? parent.width  : (main.itemWidth  + itemMargin) * filteredByNameModel.count - itemMargin + (showLo ? main.itemWidth  + itemMargin : 0)
+    Layout.maximumHeight: !main.vertical ? parent.height : (main.itemHeight + itemMargin) * filteredByNameModel.count - itemMargin + (showLo ? main.itemHeight + itemMargin : 0)
     
     
     Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
@@ -84,8 +84,7 @@ Item {
         
         visible: showLo
         
-        interactive: true
-        orientation: main.vertical ? ListView.Vertical : ListView.Horizontal
+        interactive: false
         
         model: ListModel {
             ListElement {
@@ -97,12 +96,34 @@ Item {
     }
     
     ListView {
-        id: networkList
-        anchors.top: (main.vertical && loContainer.visible) ? loContainer.bottom : parent.top
-        anchors.left: (!main.vertical && loContainer.visible) ? loContainer.right : parent.left
-        anchors.leftMargin: showLo && !vertical ? itemMargin : 0
-        anchors.topMargin: showLo && vertical ? itemMargin : 0
+        anchors.top: parent.top
+        anchors.left: parent.left
         
+        width: main.itemWidth
+        height: main.itemHeight
+        
+        visible: !showLo && filteredByNameModel.count === 0
+        
+        interactive: false
+        
+        model: ListModel {
+            ListElement {
+                DeviceName: '_'
+            }
+        }
+        
+        delegate: ActiveConnection {
+            noConnection: true
+        }
+    }
+    
+    ListView {
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.leftMargin: showLo && !vertical ? itemMargin + loContainer.width : 0
+        anchors.topMargin: showLo && vertical ? itemMargin + loContainer.height : 0
+        
+        interactive: false
         orientation: main.vertical ? ListView.Vertical : ListView.Horizontal
         
         spacing: itemMargin
