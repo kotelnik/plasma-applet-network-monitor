@@ -27,6 +27,10 @@ Item {
             deviceFilterTypeGroup.current = deviceFilterTypeRadioOff;
         }
     }
+    
+    Component.onCompleted: {
+        cfg_deviceFilterTypeChanged()
+    }
 
     ExclusiveGroup {
         id: deviceFilterTypeGroup
