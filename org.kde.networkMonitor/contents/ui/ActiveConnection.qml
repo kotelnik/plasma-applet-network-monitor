@@ -19,8 +19,6 @@ import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
-import org.kde.kcoreaddons 1.0 as KCoreAddons
 import "../code/helper.js" as Helper
 
 Item {

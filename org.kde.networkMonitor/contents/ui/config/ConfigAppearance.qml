@@ -23,7 +23,6 @@ Item {
             id: iconOpacity
             stepSize: 0.05
             minimumValue: 0
-            value: 0.3
             tickmarksEnabled: true
             width: parent.width
             Layout.columnSpan: 2
