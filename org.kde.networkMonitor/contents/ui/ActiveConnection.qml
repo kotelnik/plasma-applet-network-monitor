@@ -139,7 +139,7 @@ Item {
         height: parent.height * (1 - (main.iconBlur / 30));
         width: height;
         
-        source: 'plasmapackage:/images/network-disconnect.svg'
+        source: '../images/network-disconnect.svg'
     }
     
     PlasmaCore.SvgItem {
