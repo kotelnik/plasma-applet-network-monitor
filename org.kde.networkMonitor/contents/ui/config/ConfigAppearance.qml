@@ -9,6 +9,7 @@ Item {
     property alias cfg_iconOpacity: iconOpacity.value
     property alias cfg_iconBlur: iconBlur.value
     property alias cfg_showDeviceNames: showDeviceNames.checked
+    property alias cfg_showBiggerNumbers: showBiggerNumbers.checked
 
     GridLayout {
         Layout.fillWidth: true
@@ -52,6 +53,13 @@ Item {
             id: showDeviceNames
             Layout.columnSpan: 2
             text: i18n('Show device names')
+        }
+        
+        CheckBox {
+            id: showBiggerNumbers
+            Layout.columnSpan: 2
+            text: i18n('Show bigger text')
+            enabled: !showDeviceNames.checked
         }
         
     }

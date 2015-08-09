@@ -27,8 +27,8 @@ Item {
     width: main.itemWidth
     height: main.itemHeight
     
-    property double fontPointSize: height * 0.195 * (main.showDeviceNames ? 1 : 1.25)
-    property int graphGranularity: 20
+    property double fontPointSize: height * 0.195 * (main.showDeviceNames ? 1 : main.showBiggerNumbers ? 1.75 : 1.25)
+    property int graphGranularity: 20 * main.aspectRatio
     property bool noConnection: DeviceName === '_'
     
     function formatBytes(bytes) {
@@ -106,7 +106,7 @@ Item {
             
             connectionSpeedDownload.text = formatBytes(downBytes)
             connectionSpeedUpload.text = formatBytes(upBytes)
-
+            
             //
             // history graph
             //
@@ -136,7 +136,7 @@ Item {
         opacity: main.iconOpacity
         visible: false
 
-        height: parent.height * (1 - (main.iconBlur / 30));
+        height: main.itemHeight * (1 - (main.iconBlur / 30));
         width: height;
         
         source: '../images/network-disconnect.svg'
@@ -149,7 +149,7 @@ Item {
         
         visible: false
 
-        height: parent.height * (1 - (main.iconBlur / 30));
+        height: main.itemHeight * (1 - (main.iconBlur / 30));
         width: height;
         elementId: ConnectionIcon;
         svg: PlasmaCore.Svg {
@@ -159,7 +159,9 @@ Item {
     }
     
     FastBlur {
-        anchors.fill: parent
+        anchors.horizontalCenter: parent.horizontalCenter
+        height: main.itemHeight
+        width: height
         source: noConnection ? noConnectionIcon : connectionSvgIcon
         opacity: main.iconOpacity
         radius: main.iconBlur
@@ -201,9 +203,9 @@ Item {
     Item {
         id: speedsContainer
         width: parent.width
-        height: parent.height * (main.showDeviceNames ? (2/3) : 0.8)
+        height: parent.height * (main.showDeviceNames ? (2/3) : main.showBiggerNumbers ? 1 : 0.8)
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: main.showDeviceNames ? 0 : parent.height * 0.1
+        anchors.bottomMargin: main.showDeviceNames ? 0 : main.showBiggerNumbers ? 0 : parent.height * 0.1
         
         visible: !noConnection
         

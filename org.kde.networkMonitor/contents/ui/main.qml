@@ -26,10 +26,11 @@ Item {
     
     property bool vertical: (plasmoid.formFactor == PlasmaCore.Types.Vertical)
     
+    property bool showBiggerNumbers: plasmoid.configuration.showBiggerNumbers
     property int rows: 1
-    property double aspectRatio: 1//showDeviceNames ? 1 : 16 / 9
+    property double aspectRatio: !showDeviceNames && showBiggerNumbers ? 4 / 3 : 1
     
-    property int itemHeight: main.vertical ? parent.width : parent.height
+    property int itemHeight: main.vertical ? parent.width / aspectRatio : parent.height
     property int itemWidth: itemHeight * aspectRatio
     property int itemMargin: 5
     
