@@ -29,7 +29,7 @@ Item {
     
     property double fontPointSize: height * 0.195 * (main.showDeviceNames ? 1 : 1.25)
     property int graphGranularity: 20
-    property bool noConnection: false
+    property bool noConnection: DeviceName === '_'
     
     function formatBytes(bytes) {
         var localBytes = bytes;

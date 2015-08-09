@@ -26,8 +26,11 @@ Item {
     
     property bool vertical: (plasmoid.formFactor == PlasmaCore.Types.Vertical)
     
-    property int itemWidth: main.vertical ? parent.width : parent.height
+    property int rows: 1
+    property double aspectRatio: 1//showDeviceNames ? 1 : 16 / 9
+    
     property int itemHeight: main.vertical ? parent.width : parent.height
+    property int itemWidth: itemHeight * aspectRatio
     property int itemMargin: 5
     
     // general settings
@@ -45,11 +48,9 @@ Item {
     property bool showDeviceNames: plasmoid.configuration.showDeviceNames
     property bool historyGraphsEnabled: plasmoid.configuration.historyGraphsEnabled
     
-    Layout.minimumWidth: Layout.maximumWidth
-    Layout.minimumHeight: Layout.maximumHeight
     
-    Layout.maximumWidth:   main.vertical ? parent.width  : (main.itemWidth  + itemMargin) * filteredByNameModel.count - itemMargin + (showLo ? main.itemWidth  + itemMargin : 0)
-    Layout.maximumHeight: !main.vertical ? parent.height : (main.itemHeight + itemMargin) * filteredByNameModel.count - itemMargin + (showLo ? main.itemHeight + itemMargin : 0)
+    Layout.preferredWidth:   main.vertical ? parent.width  : (main.itemWidth  + itemMargin) * networkDevicesModel.count - itemMargin
+    Layout.preferredHeight: !main.vertical ? parent.height : (main.itemHeight + itemMargin) * networkDevicesModel.count - itemMargin
     
     
     Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
@@ -72,69 +73,44 @@ Item {
         filterRole: 'DeviceName'
         filterRegExp: deviceFilterType === 0 ? '' : deviceFilterType === 1 ? deviceWhiteListRegexp  : deviceBlackListRegexp
         sourceModel: activeNetworksModel
+        onCountChanged: devicesChanged()
     }
     
-    ListView {
-        id: loContainer
-        anchors.top: parent.top
-        anchors.left: parent.left
-        
-        width: main.itemWidth
-        height: main.itemHeight
-        
-        visible: showLo
-        
-        interactive: false
-        
-        model: ListModel {
-            ListElement {
+    ListModel {
+        id: networkDevicesModel
+    }
+    
+    function devicesChanged() {
+        networkDevicesModel.clear()
+        if (showLo) {
+            networkDevicesModel.append({
                 DeviceName: 'lo'
-            }
-        }
-        
-        delegate: ActiveConnection {}
-    }
-    
-    ListView {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        
-        width: main.itemWidth
-        height: main.itemHeight
-        
-        visible: !showLo && filteredByNameModel.count === 0
-        
-        interactive: false
-        
-        model: ListModel {
-            ListElement {
+            })
+        } else if (filteredByNameModel.count === 0) {
+            networkDevicesModel.append({
                 DeviceName: '_'
-            }
+            })
         }
-        
-        delegate: ActiveConnection {
-            noConnection: true
+        for (var i = 0; i < filteredByNameModel.count; i++) {
+            networkDevicesModel.append(filteredByNameModel.get(i))
         }
     }
     
+    onShowLoChanged: devicesChanged()
+    
     ListView {
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.leftMargin: showLo && !vertical ? itemMargin + loContainer.width : 0
-        anchors.topMargin: showLo && vertical ? itemMargin + loContainer.height : 0
         
         interactive: false
         orientation: main.vertical ? ListView.Vertical : ListView.Horizontal
         
         spacing: itemMargin
         
-        width: main.vertical ? itemWidth : itemWidth * filteredByNameModel.count
-        height: main.vertical ? itemHeight * filteredByNameModel.count : itemHeight
+        width: main.vertical ? itemWidth : itemWidth * networkDevicesModel.count
+        height: main.vertical ? itemHeight * networkDevicesModel.count : itemHeight
         
-        model: filteredByNameModel
+        model: networkDevicesModel
         
         delegate: ActiveConnection {}
     }
-    
     
 }
