@@ -30,7 +30,7 @@ Item {
     property int rows: 1
     property double aspectRatio: !showDeviceNames && showBiggerNumbers ? 4 / 3 : 1
     
-    property int itemHeight: main.vertical ? parent.width / aspectRatio : parent.height
+    property int itemHeight: vertical ? parent.width / aspectRatio : parent.height
     property int itemWidth: itemHeight * aspectRatio
     property int itemMargin: 5
     
@@ -85,15 +85,21 @@ Item {
         networkDevicesModel.clear()
         if (showLo) {
             networkDevicesModel.append({
-                DeviceName: 'lo'
+                DeviceName: 'lo',
+                ConnectionIcon: ''
             })
         } else if (filteredByNameModel.count === 0) {
             networkDevicesModel.append({
-                DeviceName: '_'
+                DeviceName: '_',
+                ConnectionIcon: ''
             })
         }
         for (var i = 0; i < filteredByNameModel.count; i++) {
-            networkDevicesModel.append(filteredByNameModel.get(i))
+            var origObj = filteredByNameModel.get(i)
+            networkDevicesModel.append({
+                DeviceName: origObj.DeviceName,
+                ConnectionIcon: origObj.ConnectionIcon
+            })
         }
     }
     
