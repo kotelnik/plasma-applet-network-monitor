@@ -47,6 +47,9 @@
         <entry name="showBiggerNumbers" type="Bool">
             <default>true</default>
         </entry>
+        <entry name="baseSizeMultiplier" type="Double">
+            <default>1</default>
+        </entry>
     </group>
 
 </kcfg>

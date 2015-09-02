@@ -1,6 +1,6 @@
 import QtQuick 2.2
-import QtQuick.Controls 1.0
-import QtQuick.Layouts 1.0
+import QtQuick.Controls 1.3
+import QtQuick.Layouts 1.1
 
 Item {
     width: childrenRect.width
@@ -10,6 +10,7 @@ Item {
     property alias cfg_iconBlur: iconBlur.value
     property alias cfg_showDeviceNames: showDeviceNames.checked
     property alias cfg_showBiggerNumbers: showBiggerNumbers.checked
+    property alias cfg_baseSizeMultiplier: baseSizeMultiplier.value
 
     GridLayout {
         Layout.fillWidth: true
@@ -60,6 +61,24 @@ Item {
             Layout.columnSpan: 2
             text: i18n('Show bigger text')
             enabled: !showDeviceNames.checked
+        }
+        
+        Item {
+            width: 2
+            height: 10
+            Layout.columnSpan: 2
+        }
+        
+        Label {
+            text: i18n('Wrapping coefficient:')
+            Layout.alignment: Qt.AlignVCenter|Qt.AlignLeft
+        }
+        SpinBox {
+            id: baseSizeMultiplier
+            decimals: 2
+            stepSize: 0.1
+            minimumValue: 0.01
+            maximumValue: 50
         }
         
     }

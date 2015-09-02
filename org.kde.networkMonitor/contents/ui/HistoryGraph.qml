@@ -15,12 +15,6 @@
  * along with this program.  If not, see <http: //www.gnu.org/licenses/>.
  */
 import QtQuick 2.2
-import QtQuick.Layouts 1.1
-import QtGraphicalEffects 1.0
-import org.kde.plasma.plasmoid 2.0
-import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
-import org.kde.kcoreaddons 1.0 as KCoreAddons
 
 Item {
     id: historyGraph
@@ -43,7 +37,7 @@ Item {
         
         delegate: Item {
             
-            property int rectHeight: graphItemHeight
+            property double rectHeight: graphItemHeight
             
             width: historyGraph.width / graphGranularity
             height: historyGraph.height

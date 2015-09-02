@@ -19,20 +19,9 @@ import QtQuick.Layouts 1.1
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
-import org.kde.kcoreaddons 1.0 as KCoreAddons
 
 Item {
     id: main
-    
-    property bool vertical: (plasmoid.formFactor == PlasmaCore.Types.Vertical)
-    
-    property bool showBiggerNumbers: plasmoid.configuration.showBiggerNumbers
-    property int rows: 1
-    property double aspectRatio: !showDeviceNames && showBiggerNumbers ? 4 / 3 : 1
-    
-    property int itemHeight: vertical ? parent.width / aspectRatio : parent.height
-    property int itemWidth: itemHeight * aspectRatio
-    property int itemMargin: 5
     
     // general settings
     property bool showLo: plasmoid.configuration.showLo
@@ -49,12 +38,72 @@ Item {
     property bool showDeviceNames: plasmoid.configuration.showDeviceNames
     property bool historyGraphsEnabled: plasmoid.configuration.historyGraphsEnabled
     
+    //
+    // sizing and spacing
+    //
+    property bool vertical: (plasmoid.formFactor == PlasmaCore.Types.Vertical)
     
-    Layout.preferredWidth:   main.vertical ? parent.width  : (main.itemWidth  + itemMargin) * networkDevicesModel.count - itemMargin
-    Layout.preferredHeight: !main.vertical ? parent.height : (main.itemHeight + itemMargin) * networkDevicesModel.count - itemMargin
+    property bool showBiggerNumbers: plasmoid.configuration.showBiggerNumbers
     
+    property double baseSizeMultiplier: plasmoid.configuration.baseSizeMultiplier
+    property int itemMargin: 5
+    
+    property double itemAspectRatio: !showDeviceNames && showBiggerNumbers ? 4 / 3 : 1
+    
+    property double parentWidth: parent === null ? 0 : parent.width
+    property double parentHeight: parent === null ? 0 : parent.height
+    
+    property double maxAllowedWidth: vertical ? parentWidth : parentHeight * itemAspectRatio
+    property double maxAllowedHeight: maxAllowedWidth / itemAspectRatio
+    
+    property double preMaxBaseWidth: theme.mSize(theme.defaultFont).width * 3 * baseSizeMultiplier
+    property int maxBaseWidth: 10
+    property int gridColumns: 1
+    property int gridRows: 1
+    
+    property double itemWidth: 10
+    property double itemHeight: 10
+    
+    property double widgetWidth: 10
+    property double widgetHeight: 10
+    
+    Layout.preferredWidth: widgetWidth
+    Layout.preferredHeight: widgetHeight
+    Layout.maximumWidth: widgetWidth
+    Layout.maximumHeight: widgetHeight
     
     Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
+    
+    onMaxAllowedHeightChanged: {
+        setItemSize()
+    }
+    
+    onMaxAllowedWidthChanged: {
+        setItemSize()
+    }
+    
+    onPreMaxBaseWidthChanged: {
+        setItemSize()
+    }
+    
+    function setItemSize() {
+        maxBaseWidth = vertical ? Math.min(preMaxBaseWidth, maxAllowedWidth) : Math.min(preMaxBaseWidth, maxAllowedHeight / itemAspectRatio)
+        gridColumns = vertical ? Math.min(Math.ceil(maxAllowedWidth / maxBaseWidth), networkDevicesModel.count) : 100
+        gridRows = vertical ? 100 : Math.min(Math.floor(maxAllowedHeight / (maxBaseWidth / itemAspectRatio)), networkDevicesModel.count)
+        
+        if (!vertical) {
+            gridColumns = Math.ceil(networkDevicesModel.count / gridRows)
+        }
+    
+        itemWidth = vertical ? (parentWidth / gridColumns) - (itemMargin * 0.5 * (gridColumns - 1)) : ((parentHeight / gridRows) * itemAspectRatio) - (itemMargin * 0.5 * (gridRows - 1))
+        itemHeight = itemWidth / itemAspectRatio
+        
+        widgetWidth = vertical ? parentWidth : (itemWidth + itemMargin) * Math.ceil(networkDevicesModel.count / gridRows) - itemMargin
+        widgetHeight = vertical ? (itemHeight + itemMargin) * Math.ceil(networkDevicesModel.count / gridColumns) - itemMargin : parentHeight
+        
+        main.width = widgetWidth
+        main.height = widgetHeight
+    }
     
     anchors.fill: parent
     
@@ -101,23 +150,29 @@ Item {
                 ConnectionIcon: origObj.ConnectionIcon
             })
         }
+        setItemSize()
     }
     
     onShowLoChanged: devicesChanged()
     
-    ListView {
+    GridLayout {
+        columns: gridColumns
+        columnSpacing: itemMargin
+        rowSpacing: itemMargin
         
-        interactive: false
-        orientation: main.vertical ? ListView.Vertical : ListView.Horizontal
+        width: main.width
+        height: main.height
         
-        spacing: itemMargin
+        Layout.preferredWidth: width
+        Layout.preferredHeight: height
         
-        width: main.vertical ? itemWidth : itemWidth * networkDevicesModel.count
-        height: main.vertical ? itemHeight * networkDevicesModel.count : itemHeight
-        
-        model: networkDevicesModel
-        
-        delegate: ActiveConnection {}
+        Repeater {
+            model: networkDevicesModel
+            delegate: ActiveConnection {
+                Layout.preferredWidth: itemWidth
+                Layout.preferredHeight: itemHeight
+            }
+        }
     }
     
 }

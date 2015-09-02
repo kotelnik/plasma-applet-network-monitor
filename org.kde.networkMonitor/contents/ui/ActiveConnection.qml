@@ -17,7 +17,6 @@
 import QtQuick 2.2
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
-import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import "../code/helper.js" as Helper
 
@@ -28,7 +27,7 @@ Item {
     height: main.itemHeight
     
     property double fontPointSize: height * 0.195 * (main.showDeviceNames ? 1 : main.showBiggerNumbers ? 1.75 : 1.25)
-    property int graphGranularity: 20 * main.aspectRatio
+    property int graphGranularity: 20 * main.itemAspectRatio
     property bool noConnection: DeviceName === '_'
     
     function formatBytes(bytes) {
@@ -77,17 +76,17 @@ Item {
     ListModel {
         id: downloadHistoryGraphModel
         
-        property int maxBytes: 0
+        property real maxBytes: 0
         property int maxBytesModelIndex: 0
-        property int lowerMaxBytesInMs: -1
+        property real lowerMaxBytesInMs: -1
     }
     
     ListModel {
         id: uploadHistoryGraphModel
         
-        property int maxBytes: 0
+        property real maxBytes: 0
         property int maxBytesModelIndex: 0
-        property int lowerMaxBytesInMs: -1
+        property real lowerMaxBytesInMs: -1
     }
     
     PlasmaCore.DataSource {
@@ -101,8 +100,15 @@ Item {
         interval: main.updateInterval
         
         onNewData: {
-            var downBytes = dataSource.data[dataSource.downloadSource].value * 1024 || 0;
-            var upBytes = dataSource.data[dataSource.uploadSource].value * 1024 || 0;
+            
+            var downData = dataSource.data[downloadSource]
+            var upData = dataSource.data[uploadSource]
+            if (downData === undefined || upData === undefined) {
+                return
+            }
+            
+            var downBytes = downData.value * 1024 || 0;
+            var upBytes = upData.value * 1024 || 0;
             
             connectionSpeedDownload.text = formatBytes(downBytes)
             connectionSpeedUpload.text = formatBytes(upBytes)
@@ -115,7 +121,7 @@ Item {
             }
             
             Helper.addSpeedData(downBytes, downloadHistoryGraphModel, graphGranularity, main.itemHeight, 1)
-            Helper.addSpeedData(upBytes, uploadHistoryGraphModel, graphGranularity, main.itemHeight, uploadHistoryGraphModel.maxBytes / downloadHistoryGraphModel.maxBytes)
+            Helper.addSpeedData(upBytes, uploadHistoryGraphModel, graphGranularity, main.itemHeight, uploadHistoryGraphModel.maxBytes === 0 ? 1 : uploadHistoryGraphModel.maxBytes / downloadHistoryGraphModel.maxBytes)
         }
         
         //for new and instantly connected sources

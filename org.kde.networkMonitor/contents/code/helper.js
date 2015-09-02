@@ -38,17 +38,14 @@ function addSpeedData(speed, model, graphGranularity, itemHeight, scaleCoeficien
     model.remove(0)
     
     var oldMaxBytes = model.maxBytes
-    var needRecalculate = false
-    
     
     // this speed is max
     if (speed >= model.maxBytes) {
         
         model.maxBytes = speed
-        model.maxBytesModelIndex = model.count
-        needRecalculate = true
+        model.maxBytesModelIndex = model.count - 1
         
-        recalculate(true, model, oldMaxBytes, scaleCoeficient)
+        recalculate(model, oldMaxBytes)
         return
     }
     
@@ -59,18 +56,19 @@ function addSpeedData(speed, model, graphGranularity, itemHeight, scaleCoeficien
     
     // decrement maxBytes model index (new speed was pushed)
     model.maxBytesModelIndex--
-    var now = new Date().getTime()
+    var nowMs = new Date().getTime()
     
     // maxSpeed is out of array? -> start lowering countdown...
     if (model.maxBytesModelIndex < 0 && model.lowerMaxBytesInMs === -1) {
-        model.lowerMaxBytesInMs = now + lowerMaxBytesTimeoutMs
-    } else if (model.lowerMaxBytesInMs !== -1 && now > model.lowerMaxBytesInMs) {
+        
+        model.lowerMaxBytesInMs = nowMs + lowerMaxBytesTimeoutMs
+        
+    } else if (model.lowerMaxBytesInMs !== -1 && nowMs > model.lowerMaxBytesInMs) {
         
         // lowering countdown is timed out -> lower maxBytes to next existing maxBytes
         model.lowerMaxBytesInMs = -1
         model.maxBytesModelIndex = 0
         model.maxBytes = 0
-        needRecalculate = true
         
         for (var i = 0; i < model.count; i++) {
             var itemSpeed = model.get(i).speed
@@ -79,20 +77,22 @@ function addSpeedData(speed, model, graphGranularity, itemHeight, scaleCoeficien
                 model.maxBytesModelIndex = i
             }
         }
+        
+        recalculate(model, oldMaxBytes)
+        
     }
     
-    
-    recalculate(needRecalculate, model, oldMaxBytes, scaleCoeficient)
 }
 
-function recalculate(needRecalculate, model, oldMaxBytes, scaleCoeficient) {
+function recalculate(model, oldMaxBytes) {
     
-    if (needRecalculate && model.maxBytes !== oldMaxBytes && model.maxBytes !== 0) {
-        var recalculateNumber = oldMaxBytes / model.maxBytes
-        print('recalculating to ', recalculateNumber, oldMaxBytes, model.maxBytes)
-        for (var i = 0; i < model.count; i++) {
-            var itemHeight = model.get(i).graphItemHeight
-            model.setProperty(i, 'graphItemHeight', itemHeight * recalculateNumber)
-        }
+    if (model.maxBytes === oldMaxBytes || model.maxBytes === 0) {
+        return
+    }
+    
+    var recalculateNumber = oldMaxBytes / model.maxBytes
+    for (var i = 0; i < model.count; i++) {
+        var itemHeight = model.get(i).graphItemHeight
+        model.setProperty(i, 'graphItemHeight', itemHeight * recalculateNumber)
     }
 }
