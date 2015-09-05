@@ -152,7 +152,7 @@ Item {
                 ConnectionIcon: ''
             })
 
-        } else if (filteredByNameModel.count === 0) {
+        } else if (filteredByNameModel.count === 0 && !showDdWrt) {
             networkDevicesModel.append({
                 DeviceName: '_',
                 ConnectionIcon: ''

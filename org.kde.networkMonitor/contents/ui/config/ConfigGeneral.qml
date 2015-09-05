@@ -38,12 +38,6 @@ Item {
             placeholderText: i18n('http://192.168.178.23')
         }
         
-        Item {
-            width: 2
-            height: 10
-            Layout.columnSpan: 2
-        }
-
         Label {
             text: i18n('DD-WRT user:')
             Layout.alignment: Qt.AlignRight
@@ -54,12 +48,6 @@ Item {
             placeholderText: i18n('admin')
         }
 
-        Item {
-            width: 2
-            height: 10
-            Layout.columnSpan: 2
-        }
-
         Label {
             text: i18n('DD-WRT password:')
             Layout.alignment: Qt.AlignRight
@@ -68,12 +56,6 @@ Item {
         TextField {
             id: ddwrtPassword
             placeholderText: i18n('password')
-        }
-
-        Item {
-            width: 2
-            height: 10
-            Layout.columnSpan: 2
         }
         
         CheckBox {
