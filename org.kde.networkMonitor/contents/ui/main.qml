@@ -25,19 +25,22 @@ Item {
     
     // general settings
     property bool showLo: plasmoid.configuration.showLo
+    property bool showDdWrt: plasmoid.configuration.showDdWrt
     property double updateInterval: plasmoid.configuration.updateInterval * 1000
     
     // filter settings
     property int deviceFilterType: plasmoid.configuration.deviceFilterType
     property string deviceWhiteListRegexp: '^(' + plasmoid.configuration.deviceWhiteListRegexp + ')$'
     property string deviceBlackListRegexp: '^(?!(' + plasmoid.configuration.deviceBlackListRegexp + '))'
-    
+    property string ddwrtHost: plasmoid.configuration.ddwrtHost
+    property string ddwrtKey: Qt.atob(plasmoid.configuration.ddWrtUser + ":" + plasmoid.configuration.ddWrtPassword)
+
     // appearance settings
     property double iconOpacity: plasmoid.configuration.iconOpacity
     property double iconBlur: plasmoid.configuration.iconBlur
     property bool showDeviceNames: plasmoid.configuration.showDeviceNames
     property bool historyGraphsEnabled: plasmoid.configuration.historyGraphsEnabled
-    
+
     //
     // sizing and spacing
     //
@@ -104,7 +107,7 @@ Item {
         main.width = widgetWidth
         main.height = widgetHeight
     }
-    
+
     anchors.fill: parent
     
     PlasmaNM.NetworkModel {
@@ -125,18 +128,30 @@ Item {
         sourceModel: activeNetworksModel
         onCountChanged: devicesChanged()
     }
+
+    DdWrtClient {
+        id: ddWrt
+    }
     
     ListModel {
         id: networkDevicesModel
     }
-    
+
     function devicesChanged() {
         networkDevicesModel.clear()
+
+        if (showDdWrt) {
+            networkDevicesModel.append({
+                DeviceName: 'ddwrt',
+                ConnectionIcon: ''})
+        }
+
         if (showLo) {
             networkDevicesModel.append({
                 DeviceName: 'lo',
                 ConnectionIcon: ''
             })
+
         } else if (filteredByNameModel.count === 0) {
             networkDevicesModel.append({
                 DeviceName: '_',
@@ -154,7 +169,8 @@ Item {
     }
     
     onShowLoChanged: devicesChanged()
-    
+    onShowDdWrtChanged: devicesChanged()
+
     GridLayout {
         columns: gridColumns
         columnSpacing: itemMargin

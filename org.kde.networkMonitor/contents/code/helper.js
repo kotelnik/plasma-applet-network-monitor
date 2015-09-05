@@ -7,6 +7,7 @@ var SpeedType = {
     Upload: 2
 }
 
+
 function addSpeedData(speed, model, graphGranularity, itemHeight, scaleCoeficient) {
     
     // initial fill up
@@ -96,3 +97,4 @@ function recalculate(model, oldMaxBytes) {
         model.setProperty(i, 'graphItemHeight', itemHeight * recalculateNumber)
     }
 }
+
