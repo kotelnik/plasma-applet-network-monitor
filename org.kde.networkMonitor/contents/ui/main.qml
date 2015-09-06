@@ -32,6 +32,7 @@ Item {
     property int deviceFilterType: plasmoid.configuration.deviceFilterType
     property string deviceWhiteListRegexp: '^(' + plasmoid.configuration.deviceWhiteListRegexp + ')$'
     property string deviceBlackListRegexp: '^(?!(' + plasmoid.configuration.deviceBlackListRegexp + '))'
+    
     property string ddwrtHost: plasmoid.configuration.ddwrtHost
     property string ddwrtKey: Qt.atob(plasmoid.configuration.ddWrtUser + ":" + plasmoid.configuration.ddWrtPassword)
 
@@ -59,8 +60,8 @@ Item {
     property double maxAllowedWidth: vertical ? parentWidth : parentHeight * itemAspectRatio
     property double maxAllowedHeight: maxAllowedWidth / itemAspectRatio
     
-    property double preMaxBaseWidth: theme.mSize(theme.defaultFont).width * 3 * baseSizeMultiplier
-    property int maxBaseWidth: 10
+    property double preMaxBaseWidth: theme.mSize(theme.defaultFont).width * 5 * baseSizeMultiplier
+    property double maxBaseWidth: 10
     property int gridColumns: 1
     property int gridRows: 1
     
@@ -90,9 +91,9 @@ Item {
     }
     
     function setItemSize() {
-        maxBaseWidth = vertical ? Math.min(preMaxBaseWidth, maxAllowedWidth) : Math.min(preMaxBaseWidth, maxAllowedHeight / itemAspectRatio)
+        maxBaseWidth = vertical ? Math.min(preMaxBaseWidth, maxAllowedWidth) : Math.min(preMaxBaseWidth, maxAllowedHeight * itemAspectRatio)
         gridColumns = vertical ? Math.min(Math.ceil(maxAllowedWidth / maxBaseWidth), networkDevicesModel.count) : 100
-        gridRows = vertical ? 100 : Math.min(Math.floor(maxAllowedHeight / (maxBaseWidth / itemAspectRatio)), networkDevicesModel.count)
+        gridRows = vertical ? 100 : Math.min(Math.ceil(maxAllowedHeight / (maxBaseWidth / itemAspectRatio)), networkDevicesModel.count)
         
         if (!vertical) {
             gridColumns = Math.ceil(networkDevicesModel.count / gridRows)
