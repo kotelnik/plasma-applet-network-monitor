@@ -26,12 +26,12 @@ Item {
     
     width: main.itemWidth
     height: main.itemHeight
-
     
     property double fontPointSize: height * 0.195 * (main.showDeviceNames ? 1 : main.showBiggerNumbers ? 1.75 : 1.25)
     property int graphGranularity: 20 * main.itemAspectRatio
     property bool noConnection: DeviceName === '_'
-
+    
+    property bool ddwrtConnection: DeviceName === 'DD-WRT'
 
     function formatBytes(bytes) {
         var localBytes = bytes;
@@ -95,61 +95,24 @@ Item {
     PlasmaCore.DataSource {
         id: dataSource
         
-        property string downloadSource: {
-
-            if (DeviceName === 'ddwrt') {
-                return 'network/interfaces/lo/receiver/data'
-            }
-
-            return 'network/interfaces/' + DeviceName + '/receiver/data'
-        }
-
-        property string uploadSource: {
-
-            if (DeviceName === 'ddwrt') {
-                return 'network/interfaces/lo/transmitter/data'
-            }
-
-            return 'network/interfaces/' + DeviceName + '/transmitter/data'
-        }
+        property string downloadSource: ddwrtConnection ? '' : 'network/interfaces/' + DeviceName + '/receiver/data'
+        property string uploadSource: ddwrtConnection ? '' : 'network/interfaces/' + DeviceName + '/transmitter/data'
 
         engine: 'systemmonitor'
         connectedSources: [downloadSource, uploadSource]
-        interval: main.updateInterval
+        interval: ddwrtConnection ? 0 : main.updateInterval
         
         onNewData: {
-            var downBytes = 0;
-            var upBytes = 0;
-
-            if (DeviceName === 'ddwrt') {
-                
-                downBytes = ddWrt.ddwrt_din
-                upBytes = ddWrt.ddwrt_dout
-                
-            } else {
-            
-                var downData = dataSource.data[downloadSource]
-                var upData = dataSource.data[uploadSource]
-                if (downData === undefined || upData === undefined) {
-                    return
-                }
-
-                downBytes = downData.value * 1024 || 0;
-                upBytes = upData.value * 1024 || 0;
-            }
-            
-            connectionSpeedDownload.text = formatBytes(downBytes)
-            connectionSpeedUpload.text = formatBytes(upBytes)
-            
-            //
-            // history graph
-            //
-            if (!historyGraphsEnabled || sourceName === downloadSource) {
+            var downData = dataSource.data[downloadSource]
+            var upData = dataSource.data[uploadSource]
+            if (downData === undefined || upData === undefined) {
                 return
             }
-            
-            Helper.addSpeedData(downBytes, downloadHistoryGraphModel, graphGranularity, main.itemHeight, 1)
-            Helper.addSpeedData(upBytes, uploadHistoryGraphModel, graphGranularity, main.itemHeight, uploadHistoryGraphModel.maxBytes === 0 ? 1 : uploadHistoryGraphModel.maxBytes / downloadHistoryGraphModel.maxBytes)
+
+            var downBytes = downData.value * 1024 || 0;
+            var upBytes = upData.value * 1024 || 0;
+
+            updateSpeeds(downBytes, upBytes, sourceName === dataSource.downloadSource)
         }
         
         //for new and instantly connected sources
@@ -160,6 +123,30 @@ Item {
                 dataSource.connectedSources.push(dataSource.downloadSource);
                 dataSource.connectedSources.push(dataSource.uploadSource);
             }
+        }
+    }
+    
+    function updateSpeeds(downBytes, upBytes, canUpdateHistoryGraph) {
+        connectionSpeedDownload.text = formatBytes(downBytes)
+        connectionSpeedUpload.text = formatBytes(upBytes)
+        
+        //
+        // history graph
+        //
+        if (!historyGraphsEnabled || !canUpdateHistoryGraph) {
+            return
+        }
+        
+        Helper.addSpeedData(downBytes, downloadHistoryGraphModel, graphGranularity, main.itemHeight, 1)
+        Helper.addSpeedData(upBytes, uploadHistoryGraphModel, graphGranularity, main.itemHeight, uploadHistoryGraphModel.maxBytes === 0 ? 1 : uploadHistoryGraphModel.maxBytes / downloadHistoryGraphModel.maxBytes)
+    }
+    
+    Timer {
+        interval: main.updateInterval;
+        running: ddwrtConnection;
+        repeat: true
+        onTriggered: {
+            updateSpeeds(ddWrt.ddwrt_din, ddWrt.ddwrt_dout, true)
         }
     }
     

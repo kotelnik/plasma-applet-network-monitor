@@ -15,10 +15,6 @@
  * along with this program.  If not, see <http: //www.gnu.org/licenses/>.
  */
 import QtQuick 2.2
-import QtQuick.Layouts 1.1
-import QtGraphicalEffects 1.0
-import org.kde.plasma.core 2.0 as PlasmaCore
-
 
 Item {
     id: ddwrtClient
@@ -32,6 +28,8 @@ Item {
     property double last_ifin: 0
     property double last_ifout: 0
     property double last_ugmt: 0
+    
+    property int k: 0
 
     function queryDdWrt() {
         var request = new XMLHttpRequest();
@@ -53,8 +51,6 @@ Item {
                 }
                 var ifin=parseInt(data[0]);
                 var ifout=parseInt(data[8]);
-                
-                print('ifin=' + ifin + ', ifout=' + ifout + ', ugmt=' + ugmt)
 
                 var diff_ugmt  = ugmt - last_ugmt;
                 var diff_ifin  = ifin - last_ifin;
@@ -69,16 +65,10 @@ Item {
 
                 ddwrt_din = diff_ifin / diff_ugmt; // B / sec
                 ddwrt_dout = diff_ifout / diff_ugmt; // B / sec
-                
-//                 print('faking...')
-//                 ddwrt_din = 123;
-//                 ddwrt_dout = 321;
             }
         }
 
         var url = ddwrtHost + "/fetchif.cgi?vlan2"
-//         url = 'http://home/~kotelnik/static/dd-wrt.out'
-        print('getting ' + url)
         request.open('GET', url)
         request.setRequestHeader("Authorization", "Basic " + ddwrtKey)
         request.send()

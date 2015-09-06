@@ -149,7 +149,7 @@ Item {
         
         if (showDdWrt) {
             networkDevicesModel.append({
-                DeviceName: 'ddwrt',
+                DeviceName: 'DD-WRT',
                 ConnectionIcon: ''})
         }
         
