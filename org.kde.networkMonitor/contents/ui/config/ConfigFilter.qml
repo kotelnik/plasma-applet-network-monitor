@@ -41,27 +41,15 @@ Item {
         Layout.fillWidth: true
         columns: 3
 
-        Item {
-            width: 2
-            height: 10
-            Layout.columnSpan: 3
-        }
-
         CheckBox {
-            id: showDdWrt
-            text: i18n('Show DD-WRT')
-            Layout.columnSpan: 3
-        }
-
-        Item {
-            width: 2
-            height: 10
+            id: showLo
+            text: i18n('Show loopback')
             Layout.columnSpan: 3
         }
         
         CheckBox {
-            id: showLo
-            text: i18n('Show loopback')
+            id: showDdWrt
+            text: i18n('Show DD-WRT')
             Layout.columnSpan: 3
         }
         

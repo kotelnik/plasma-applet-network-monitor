@@ -4,7 +4,7 @@ import org.kde.plasma.configuration 2.0
 ConfigModel {
     ConfigCategory {
          name: i18n('General')
-         icon: 'preferences-system-windows'
+         icon: Qt.resolvedUrl('../images/network-monitor.svg')
          source: 'config/ConfigGeneral.qml'
     }
     ConfigCategory {
@@ -16,5 +16,10 @@ ConfigModel {
          name: i18n('Appearance')
          icon: 'preferences-desktop-color'
          source: 'config/ConfigAppearance.qml'
+    }
+    ConfigCategory {
+         name: i18n('DD-WRT')
+         icon: Qt.resolvedUrl('../images/dd-wrt.png')
+         source: 'config/ConfigDDWRT.qml'
     }
 }

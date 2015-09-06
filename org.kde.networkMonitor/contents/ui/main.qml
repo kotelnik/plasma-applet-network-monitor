@@ -140,24 +140,26 @@ Item {
     function devicesChanged() {
         networkDevicesModel.clear()
 
-        if (showDdWrt) {
-            networkDevicesModel.append({
-                DeviceName: 'ddwrt',
-                ConnectionIcon: ''})
-        }
-
         if (showLo) {
             networkDevicesModel.append({
                 DeviceName: 'lo',
                 ConnectionIcon: ''
             })
-
-        } else if (filteredByNameModel.count === 0 && !showDdWrt) {
+        }
+        
+        if (showDdWrt) {
+            networkDevicesModel.append({
+                DeviceName: 'ddwrt',
+                ConnectionIcon: ''})
+        }
+        
+        if (filteredByNameModel.count === 0 && !showLo && !showDdWrt) {
             networkDevicesModel.append({
                 DeviceName: '_',
                 ConnectionIcon: ''
             })
         }
+        
         for (var i = 0; i < filteredByNameModel.count; i++) {
             var origObj = filteredByNameModel.get(i)
             networkDevicesModel.append({
