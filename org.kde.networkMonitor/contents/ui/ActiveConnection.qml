@@ -20,16 +20,19 @@ import QtGraphicalEffects 1.0
 import org.kde.plasma.core 2.0 as PlasmaCore
 import "../code/helper.js" as Helper
 
+
 Item {
     id: activeConnection
     
     width: main.itemWidth
     height: main.itemHeight
+
     
     property double fontPointSize: height * 0.195 * (main.showDeviceNames ? 1 : main.showBiggerNumbers ? 1.75 : 1.25)
     property int graphGranularity: 20 * main.itemAspectRatio
     property bool noConnection: DeviceName === '_'
-    
+
+
     function formatBytes(bytes) {
         var localBytes = bytes;
         var suffix = 'B';
@@ -92,23 +95,47 @@ Item {
     PlasmaCore.DataSource {
         id: dataSource
         
-        property string downloadSource: 'network/interfaces/' + DeviceName + '/receiver/data'
-        property string uploadSource: 'network/interfaces/' + DeviceName + '/transmitter/data'
+        property string downloadSource: {
+            console.log(DeviceName)
+
+            if(DeviceName == "ddwrt")
+                return 'network/interfaces/' + "lo" + '/receiver/data'
+
+            return 'network/interfaces/' + DeviceName + '/receiver/data'
+        }
+
+        property string uploadSource:{
+            console.log(DeviceName)
+
+            if(DeviceName == "ddwrt")
+                return 'network/interfaces/' + "lo" + '/transmitter/data'
+
+            return 'network/interfaces/' + DeviceName + '/transmitter/data'
+        }
 
         engine: 'systemmonitor'
         connectedSources: [downloadSource, uploadSource]
         interval: main.updateInterval
         
         onNewData: {
-            
-            var downData = dataSource.data[downloadSource]
-            var upData = dataSource.data[uploadSource]
-            if (downData === undefined || upData === undefined) {
-                return
+            var downBytes = 0;
+            var upBytes = 0;
+
+            if(DeviceName === "ddwrt") {
+                downBytes = ddWrt.ddwrt_din
+                upBytes = ddWrt.ddwrt_dout
             }
+            else {
             
-            var downBytes = downData.value * 1024 || 0;
-            var upBytes = upData.value * 1024 || 0;
+                var downData = dataSource.data[downloadSource]
+                var upData = dataSource.data[uploadSource]
+                if (downData === undefined || upData === undefined) {
+                    return
+                }
+
+                downBytes = downData.value * 1024 || 0;
+                upBytes = upData.value * 1024 || 0;
+            }
             
             connectionSpeedDownload.text = formatBytes(downBytes)
             connectionSpeedUpload.text = formatBytes(upBytes)
@@ -126,6 +153,7 @@ Item {
         
         //for new and instantly connected sources
         onSourceAdded: {
+
             if (dataSource.downloadSource === source || dataSource.uploadSource === source) {
                 dataSource.connectedSources.splice(0, 2);
                 dataSource.connectedSources.push(dataSource.downloadSource);
