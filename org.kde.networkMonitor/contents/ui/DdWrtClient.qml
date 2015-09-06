@@ -26,7 +26,6 @@ Item {
     width: 0
     height: 0
 
-    //! This function fetches the players last matches from the dota2 webapi
     // DD-WRT hacky temporaries
     property double ddwrt_din: 0
     property double ddwrt_dout: 0
@@ -38,8 +37,7 @@ Item {
         var request = new XMLHttpRequest();
         request.onreadystatechange = function() {
             if (request.readyState === XMLHttpRequest.DONE && request.status === 200) {
-                var document = request.responseText.replace(/\s\s+/g, ' ')
-
+                
                 var data=request.responseText.split("\n");
                 var dateStr=data[0];
                 //fake timezone cause the real value might confuse JS
@@ -55,6 +53,8 @@ Item {
                 }
                 var ifin=parseInt(data[0]);
                 var ifout=parseInt(data[8]);
+                
+                print('ifin=' + ifin + ', ifout=' + ifout + ', ugmt=' + ugmt)
 
                 var diff_ugmt  = ugmt - last_ugmt;
                 var diff_ifin  = ifin - last_ifin;
@@ -69,18 +69,24 @@ Item {
 
                 ddwrt_din = diff_ifin / diff_ugmt; // B / sec
                 ddwrt_dout = diff_ifout / diff_ugmt; // B / sec
+                
+//                 print('faking...')
+//                 ddwrt_din = 123;
+//                 ddwrt_dout = 321;
             }
         }
 
         var url = ddwrtHost + "/fetchif.cgi?vlan2"
+//         url = 'http://home/~kotelnik/static/dd-wrt.out'
+        print('getting ' + url)
         request.open('GET', url)
         request.setRequestHeader("Authorization", "Basic " + ddwrtKey)
         request.send()
     }
 
     Timer {
-        interval: 1000;
-        running: true;
+        interval: main.updateInterval;
+        running: main.showDdWrt;
         repeat: true
         onTriggered: {
             queryDdWrt()

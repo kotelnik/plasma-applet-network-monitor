@@ -6,21 +6,6 @@
     <kcfgfile name=""/>
 
     <group name="General">
-        <entry name="showLo" type="Bool">
-            <default>false</default>
-        </entry>
-        <entry name="showDdWrt" type="Bool">
-            <default>true</default>
-        </entry>
-        <entry name="ddwrtHost" type="String">
-            <default>http://192.168.178.1</default>
-        </entry>
-        <entry name="ddwrtUser" type="String">
-            <default>admin</default>
-        </entry>
-        <entry name="ddwrtPassword" type="String">
-            <default></default>
-        </entry>
         <entry name="updateInterval" type="Double">
             <default>1.0</default>
         </entry>
@@ -30,6 +15,12 @@
     </group>
     
     <group name="Filter">
+        <entry name="showLo" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="showDdWrt" type="Bool">
+            <default>false</default>
+        </entry>
         <entry name="deviceFilterType" type="Enum">
             <choices>
                 <choice name="Off"/>
@@ -61,6 +52,18 @@
         </entry>
         <entry name="baseSizeMultiplier" type="Double">
             <default>1</default>
+        </entry>
+    </group>
+    
+    <group name="DDWRT">
+        <entry name="ddwrtHost" type="String">
+            <default></default>
+        </entry>
+        <entry name="ddwrtUser" type="String">
+            <default></default>
+        </entry>
+        <entry name="ddwrtPassword" type="String">
+            <default></default>
         </entry>
     </group>
 

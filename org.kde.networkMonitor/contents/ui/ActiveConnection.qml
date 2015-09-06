@@ -96,19 +96,19 @@ Item {
         id: dataSource
         
         property string downloadSource: {
-            console.log(DeviceName)
 
-            if(DeviceName == "ddwrt")
-                return 'network/interfaces/' + "lo" + '/receiver/data'
+            if (DeviceName === 'ddwrt') {
+                return 'network/interfaces/lo/receiver/data'
+            }
 
             return 'network/interfaces/' + DeviceName + '/receiver/data'
         }
 
-        property string uploadSource:{
-            console.log(DeviceName)
+        property string uploadSource: {
 
-            if(DeviceName == "ddwrt")
-                return 'network/interfaces/' + "lo" + '/transmitter/data'
+            if (DeviceName === 'ddwrt') {
+                return 'network/interfaces/lo/transmitter/data'
+            }
 
             return 'network/interfaces/' + DeviceName + '/transmitter/data'
         }
@@ -121,11 +121,12 @@ Item {
             var downBytes = 0;
             var upBytes = 0;
 
-            if(DeviceName === "ddwrt") {
+            if (DeviceName === 'ddwrt') {
+                
                 downBytes = ddWrt.ddwrt_din
                 upBytes = ddWrt.ddwrt_dout
-            }
-            else {
+                
+            } else {
             
                 var downData = dataSource.data[downloadSource]
                 var upData = dataSource.data[uploadSource]

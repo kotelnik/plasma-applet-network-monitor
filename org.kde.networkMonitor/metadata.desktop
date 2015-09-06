@@ -15,6 +15,7 @@ X-Plasma-API=declarativeappletscript
 X-Plasma-MainScript=ui/main.qml
 X-Plasma-RemoteLocation=
 X-KDE-PluginInfo-Category=System Information
-Icon=network-connect
+Icon=/usr/share/plasma/plasmoids/org.kde.networkMonitor/contents/images/network-monitor.svg
+#Icon=network-connect
 #prefix for Icon is: /usr/share/icons/breeze/actions/toolbar/
 #copy this file into ~/.local/share/kservices5
