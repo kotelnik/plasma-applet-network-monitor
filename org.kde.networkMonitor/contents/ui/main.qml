@@ -40,20 +40,19 @@ Item {
     // appearance settings
     property double iconOpacity: plasmoid.configuration.iconOpacity
     property double iconBlur: plasmoid.configuration.iconBlur
-    property bool showDeviceNames: plasmoid.configuration.showDeviceNames
     property bool historyGraphsEnabled: plasmoid.configuration.historyGraphsEnabled
+    // 0 - full view, 1 - no device names, 2 - big numbers, 3 - one line
+    property int layoutType: plasmoid.configuration.layoutType
 
     //
     // sizing and spacing
     //
     property bool vertical: (plasmoid.formFactor == PlasmaCore.Types.Vertical)
     
-    property bool showBiggerNumbers: plasmoid.configuration.showBiggerNumbers
-    
     property double baseSizeMultiplier: plasmoid.configuration.baseSizeMultiplier
     property int itemMargin: 5
     
-    property double itemAspectRatio: !showDeviceNames && showBiggerNumbers ? 4 / 3 : 1
+    property double itemAspectRatio: layoutType === 2 ? 4/3 : layoutType === 3 ? 13/2 : 1
     
     property double parentWidth: parent === null ? 0 : parent.width
     property double parentHeight: parent === null ? 0 : parent.height
@@ -101,7 +100,7 @@ Item {
         }
     
         itemWidth = vertical ? (parentWidth / gridColumns) - (itemMargin * 0.5 * (gridColumns - 1)) : ((parentHeight / gridRows) * itemAspectRatio) - (itemMargin * 0.5 * (gridRows - 1))
-        itemHeight = itemWidth / itemAspectRatio
+        itemHeight = itemWidth / itemAspectRatio + (layoutType === 3 ? - itemMargin : 0)
         
         widgetWidth = vertical ? parentWidth : (itemWidth + itemMargin) * Math.ceil(networkDevicesModel.count / gridRows) - itemMargin
         widgetHeight = vertical ? (itemHeight + itemMargin) * Math.ceil(networkDevicesModel.count / gridColumns) - itemMargin : parentHeight

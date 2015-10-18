@@ -8,9 +8,34 @@ Item {
 
     property alias cfg_iconOpacity: iconOpacity.value
     property alias cfg_iconBlur: iconBlur.value
-    property alias cfg_showDeviceNames: showDeviceNames.checked
-    property alias cfg_showBiggerNumbers: showBiggerNumbers.checked
+    property int cfg_layoutType
     property alias cfg_baseSizeMultiplier: baseSizeMultiplier.value
+    
+    onCfg_layoutTypeChanged: {
+        switch (cfg_layoutType) {
+        case 0:
+            layoutTypeGroup.current = layoutTypeRadioFullView;
+            break;
+        case 1:
+            layoutTypeGroup.current = layoutTypeRadioNoDeviceNames;
+            break;
+        case 2:
+            layoutTypeGroup.current = layoutTypeRadioBigNumbers;
+            break;
+        case 3:
+            layoutTypeGroup.current = layoutTypeRadioOneLine;
+            break;
+        default:
+        }
+    }
+    
+    Component.onCompleted: {
+        cfg_layoutTypeChanged()
+    }
+
+    ExclusiveGroup {
+        id: layoutTypeGroup
+    }
 
     GridLayout {
         Layout.fillWidth: true
@@ -50,17 +75,38 @@ Item {
             Layout.columnSpan: 2
         }
         
-        CheckBox {
-            id: showDeviceNames
-            Layout.columnSpan: 2
-            text: i18n('Show device names')
+        Label {
+            text: i18n('Layout type:')
+            Layout.alignment: Qt.AlignVCenter|Qt.AlignRight
         }
-        
-        CheckBox {
-            id: showBiggerNumbers
-            Layout.columnSpan: 2
-            text: i18n('Show bigger text')
-            enabled: !showDeviceNames.checked
+        RadioButton {
+            id: layoutTypeRadioFullView
+            exclusiveGroup: layoutTypeGroup
+            text: i18n("Full view")
+            onCheckedChanged: if (checked) cfg_layoutType = 0;
+        }
+        Item {
+            width: 2
+            height: 2
+            Layout.rowSpan: 3
+        }
+        RadioButton {
+            id: layoutTypeRadioNoDeviceNames
+            exclusiveGroup: layoutTypeGroup
+            text: i18n("No device names")
+            onCheckedChanged: if (checked) cfg_layoutType = 1;
+        }
+        RadioButton {
+            id: layoutTypeRadioBigNumbers
+            exclusiveGroup: layoutTypeGroup
+            text: i18n("Big numbers")
+            onCheckedChanged: if (checked) cfg_layoutType = 2;
+        }
+        RadioButton {
+            id: layoutTypeRadioOneLine
+            exclusiveGroup: layoutTypeGroup
+            text: i18n("One line")
+            onCheckedChanged: if (checked) cfg_layoutType = 3;
         }
         
         Item {

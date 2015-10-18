@@ -27,7 +27,9 @@ Item {
     width: main.itemWidth
     height: main.itemHeight
     
-    property double fontPointSize: height * 0.195 * (main.showDeviceNames ? 1 : main.showBiggerNumbers ? 1.75 : 1.25)
+    property int oneLineMargin: 5
+    
+    property double fontPointSize: height * 0.195 * (main.layoutType === 0 ? 1 : main.layoutType === 1 ? 1.25 : main.layoutType === 2 ? 1.75 : 3.25)
     property int graphGranularity: 20 * main.itemAspectRatio
     property bool noConnection: DeviceName === '_'
     
@@ -111,7 +113,7 @@ Item {
 
             var downBytes = downData.value * 1024 || 0;
             var upBytes = upData.value * 1024 || 0;
-
+            
             updateSpeeds(downBytes, upBytes, sourceName === dataSource.downloadSource)
         }
         
@@ -129,6 +131,11 @@ Item {
     function updateSpeeds(downBytes, upBytes, canUpdateHistoryGraph) {
         connectionSpeedDownload.text = formatBytes(downBytes)
         connectionSpeedUpload.text = formatBytes(upBytes)
+        
+        if (main.layoutType === 3) {
+            connectionSpeedDownload.text += '⬇'
+            connectionSpeedUpload.text += '⬆'
+        }
         
         //
         // history graph
@@ -167,12 +174,13 @@ Item {
     PlasmaCore.SvgItem {
         id: connectionSvgIcon;
 
-        anchors.centerIn: parent
-        
         visible: false
 
         height: main.itemHeight * (1 - (main.iconBlur / 30));
         width: height;
+        
+        anchors.centerIn: parent
+        
         elementId: ConnectionIcon;
         svg: PlasmaCore.Svg {
             multipleImages: true
@@ -181,7 +189,11 @@ Item {
     }
     
     FastBlur {
-        anchors.horizontalCenter: parent.horizontalCenter
+        //anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: (parent.width - width) / 2 + (main.layoutType === 3 ? width / 2 + oneLineMargin : 0)
+        
         height: main.itemHeight
         width: height
         source: noConnection ? noConnectionIcon : connectionSvgIcon
@@ -219,35 +231,36 @@ Item {
         scale: paintedWidth > parent.width ? (parent.width / paintedWidth) : 1
         transformOrigin: Item.Left
         
-        visible: !noConnection && main.showDeviceNames
+        visible: !noConnection && main.layoutType === 0
     }
     
     Item {
         id: speedsContainer
         width: parent.width
-        height: parent.height * (main.showDeviceNames ? (2/3) : main.showBiggerNumbers ? 1 : 0.8)
+        height: parent.height * (main.layoutType === 0 ? (2/3) : main.layoutType === 1 ? 0.8 : 1)
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: main.showDeviceNames ? 0 : main.showBiggerNumbers ? 0 : parent.height * 0.1
+        anchors.bottomMargin: main.layoutType !== 1 ? 0 : parent.height * 0.1
         
         visible: !noConnection
         
         Text {
             id: uploadIcon
             anchors {
-                left: parent.left;
+                left: parent.left
                 top: parent.top
             }
             text: '⬆'
             color: theme.textColor
             font.pointSize: fontPointSize
-            visible: main.showDeviceNames
+            visible: main.layoutType === 0
         }
         
         Text {
             id: connectionSpeedUpload
             anchors {
-                right: parent.right;
-                top: parent.top
+                right: parent.right
+                verticalCenter: parent.verticalCenter
+                verticalCenterOffset: main.layoutType === 3 ? 0 : - (parent.height - fontPointSize * 1.8) / 2 
             }
             text: '_'
             color: theme.textColor
@@ -257,20 +270,22 @@ Item {
         Text {
             id: downloadIcon
             anchors {
-                left: parent.left;
+                left: parent.left
                 bottom: parent.bottom
             }
             text: '⬇'
             color: theme.textColor
             font.pointSize: fontPointSize
-            visible: main.showDeviceNames
+            visible: main.layoutType === 0
         }
         
         Text {
             id: connectionSpeedDownload
             anchors {
-                right: parent.right;
-                bottom: parent.bottom
+                right: parent.right
+                rightMargin: main.layoutType === 3 ? parent.width / 2 - oneLineMargin : 0
+                verticalCenter: parent.verticalCenter
+                verticalCenterOffset: main.layoutType === 3 ? 0 : (parent.height - fontPointSize * 1.8) / 2
             }
             text: '_'
             color: theme.textColor
