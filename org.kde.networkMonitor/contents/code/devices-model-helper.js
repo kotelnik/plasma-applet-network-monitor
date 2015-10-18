@@ -1,6 +1,6 @@
 var modelIndexByCmdSource = {}
 
-var stateCmdPattern = 'cat /sys/class/net/{deviceName}/operstate';
+var stateCmdPattern = 'ip addr show dev {deviceName}';
 
 var networkSourceStartLength = 'network/interfaces/'.length
 var networkSourceEndLength = '/transmitter/data'.length
@@ -71,12 +71,11 @@ function removeConnection(devicesModel, deviceName, executableDS) {
 function setConnectionState(devicesModel, cmdSource, state) {
     
     var devicesModelIndex = modelIndexByCmdSource[cmdSource]
-    var connectionState = state.trim()
-    print('[networkMonitor] setting connection state: ' + connectionState + ', cmd: ' + cmdSource + ', index=' + devicesModelIndex)
+    print('[networkMonitor] setting connection state - cmd: ' + cmdSource + ', index=' + devicesModelIndex + ', stateString.length: ' + state.length)
     
     if (devicesModelIndex >= 0) {
         var oldValue = devicesModel.get(devicesModelIndex).ConnectionState
-        var newValue = connectionState === 'down' ? 0 : 2
+        var newValue = determineConnectedFromString(state)
         
         devicesModel.setProperty(devicesModelIndex, 'ConnectionState', newValue)
         
@@ -84,6 +83,11 @@ function setConnectionState(devicesModel, cmdSource, state) {
             main.devicesChanged()
         }
     }
+}
+
+function determineConnectedFromString(stateString) {
+    var connectionState = stateString.trim()
+    return connectionState.indexOf('inet') !== -1 ? 2 : 0
 }
 
 function rebuildIndex(devicesModel) {
