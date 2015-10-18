@@ -18,7 +18,7 @@ import QtQuick 2.2
 import QtQuick.Layouts 1.1
 import org.kde.plasma.plasmoid 2.0
 import org.kde.plasma.core 2.0 as PlasmaCore
-import org.kde.plasma.networkmanagement 0.2 as PlasmaNM
+import "../code/devices-model-helper.js" as DevicesModelHelper
 
 Item {
     id: main
@@ -32,6 +32,7 @@ Item {
     property int deviceFilterType: plasmoid.configuration.deviceFilterType
     property string deviceWhiteListRegexp: '^(' + plasmoid.configuration.deviceWhiteListRegexp + ')$'
     property string deviceBlackListRegexp: '^(?!(' + plasmoid.configuration.deviceBlackListRegexp + '))'
+    property string filterRegExp: deviceFilterType === 0 ? '' : deviceFilterType === 1 ? deviceWhiteListRegexp  : deviceBlackListRegexp
     
     property string ddwrtHost: plasmoid.configuration.ddwrtHost
     property string ddwrtKey: Qt.atob(plasmoid.configuration.ddWrtUser + ":" + plasmoid.configuration.ddWrtPassword)
@@ -111,23 +112,62 @@ Item {
 
     anchors.fill: parent
     
-    PlasmaNM.NetworkModel {
+    PlasmaCore.DataSource {
+        id: systemmonitorDS
+        engine: 'systemmonitor'
+        onSourceAdded: {
+            sourceAddedOrRemoved(source, true)
+        }
+        onSourceRemoved: {
+            sourceAddedOrRemoved(source, false)
+        }
+    }
+    
+    PlasmaCore.DataSource {
+        id: executableDS
+        engine: 'executable'
+        
+        connectedSources: []
+        
+        onNewData: {
+            if (data['exit code'] > 0) {
+                return
+            }
+            DevicesModelHelper.setConnectionState(connectionModel, sourceName, data.stdout)
+        }
+        
+        interval: 1000
+    }
+    
+    function sourceAddedOrRemoved(source, added) {
+        DevicesModelHelper.tryAddOrRemoveConnection(connectionModel, source, executableDS, added)
+    }
+    
+    Component.onCompleted: {
+        reloadComponent()
+    }
+    
+    function reloadComponent() {
+        print('[networkMonitor] completed')
+        print('[networkMonitor] systemmonitorDS:')
+        systemmonitorDS.sources.forEach(function (source) {
+            print('[networkMonitor]   ' + source)
+            sourceAddedOrRemoved(source, true)
+        })
+        print('[networkMonitor] connectionModel:')
+        for (var i = 0; i < connectionModel.count; i++) {
+            var obj = connectionModel.get(i)
+            print('[networkMonitor]   ' + obj.DeviceName + ', ' + obj.ConnectionIcon + ', ' + obj.ConnectionState + ', ' + i)
+        }
+        devicesChanged()
+    }
+    
+    onFilterRegExpChanged: {
+        devicesChanged()
+    }
+    
+    ListModel {
         id: connectionModel
-    }
-
-    PlasmaCore.SortFilterModel {
-        id: activeNetworksModel
-        filterRole: 'ConnectionState'
-        filterRegExp: '2'
-        sourceModel: connectionModel
-    }
-
-    PlasmaCore.SortFilterModel {
-        id: filteredByNameModel
-        filterRole: 'DeviceName'
-        filterRegExp: deviceFilterType === 0 ? '' : deviceFilterType === 1 ? deviceWhiteListRegexp  : deviceBlackListRegexp
-        sourceModel: activeNetworksModel
-        onCountChanged: devicesChanged()
     }
 
     DdWrtClient {
@@ -151,23 +191,33 @@ Item {
         if (showDdWrt) {
             networkDevicesModel.append({
                 DeviceName: 'DD-WRT',
-                ConnectionIcon: ''})
+                ConnectionIcon: ''
+            })
         }
         
-        if (filteredByNameModel.count === 0 && !showLo && !showDdWrt) {
+        // filter connectionModel
+        var filterRegExp = deviceFilterType === 0 ? '' : deviceFilterType === 1 ? deviceWhiteListRegexp  : deviceBlackListRegexp
+        var filteredModel = []
+        for (var i = 0; i < connectionModel.count; i++) {
+            var obj = connectionModel.get(i)
+            if (obj.ConnectionState === 2 && obj.DeviceName.match(filterRegExp)) {
+                filteredModel.push(obj)
+            }
+        }
+        
+        if (filteredModel.length === 0 && !showLo && !showDdWrt) {
             networkDevicesModel.append({
                 DeviceName: '_',
                 ConnectionIcon: ''
             })
         }
         
-        for (var i = 0; i < filteredByNameModel.count; i++) {
-            var origObj = filteredByNameModel.get(i)
+        filteredModel.forEach(function (origObj) {
             networkDevicesModel.append({
                 DeviceName: origObj.DeviceName,
                 ConnectionIcon: origObj.ConnectionIcon
             })
-        }
+        })
         setItemSize()
     }
     
