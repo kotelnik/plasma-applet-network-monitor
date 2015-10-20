@@ -16,10 +16,10 @@ function tryAddOrRemoveConnection(devicesModel, source, executableDS, added) {
     }
     
     if (added) {
-        print('[networkMonitor] ADDED: ' + deviceName)
+        dbgprint('ADDED: ' + deviceName)
         DevicesModelHelper.addConnection(devicesModel, deviceName, executableDS)
     } else {
-        print('[networkMonitor] REMOVED: ' + deviceName)
+        dbgprint('REMOVED: ' + deviceName)
         DevicesModelHelper.removeConnection(devicesModel, deviceName, executableDS)
     }
 }
@@ -35,7 +35,7 @@ function addConnection(devicesModel, deviceName, executableDS) {
     modelIndexByCmdSource[stateCmd] = devicesModel.count
     
     var connectionIcon = deviceName.indexOf('e') === 0 ? 'network-wired-activated' : deviceName.indexOf('w') === 0 ? 'network-wireless-connected-100' : 'network-wired'
-    print('[networkMonitor] connecting with connection icon: ' + connectionIcon)
+    dbgprint('connecting with connection icon: ' + connectionIcon)
     
     devicesModel.append({
         ConnectionState: 0,
@@ -45,7 +45,7 @@ function addConnection(devicesModel, deviceName, executableDS) {
     
     sortDevicesModelAndRebuildIndex(devicesModel)
     
-    print('[networkMonitor] connecting executable source: ' + stateCmd)
+    dbgprint('connecting executable source: ' + stateCmd)
     executableDS.connectSource(stateCmd)
     
     main.devicesChanged()
@@ -55,11 +55,11 @@ function addConnection(devicesModel, deviceName, executableDS) {
 function removeConnection(devicesModel, deviceName, executableDS) {
     
     var stateCmd = stateCmdPattern.replace('{deviceName}', deviceName)
-    print('[networkMonitor] disconnecting executable source: ' + stateCmd)
+    dbgprint('disconnecting executable source: ' + stateCmd)
     executableDS.disconnectSource(stateCmd)
     
     var devicesModelIndex = modelIndexByCmdSource[stateCmd]
-    print('[networkMonitor] removing from devices model, index: ' + devicesModelIndex)
+    dbgprint('removing from devices model, index: ' + devicesModelIndex)
     delete modelIndexByCmdSource[stateCmd]
     devicesModel.remove(devicesModelIndex)
     rebuildIndex(devicesModel)
@@ -71,7 +71,7 @@ function removeConnection(devicesModel, deviceName, executableDS) {
 function setConnectionState(devicesModel, cmdSource, state) {
     
     var devicesModelIndex = modelIndexByCmdSource[cmdSource]
-    print('[networkMonitor] setting connection state - cmd: ' + cmdSource + ', index=' + devicesModelIndex + ', stateString.length: ' + state.length)
+    dbgprint('setting connection state - cmd: ' + cmdSource + ', index=' + devicesModelIndex + ', stateString.length: ' + state.length)
     
     if (devicesModelIndex >= 0) {
         var oldValue = devicesModel.get(devicesModelIndex).ConnectionState

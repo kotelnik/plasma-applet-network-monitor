@@ -78,6 +78,15 @@ Item {
     
     Plasmoid.preferredRepresentation: Plasmoid.fullRepresentation
     
+    property bool debugLogging: false
+    
+    function dbgprint(msg) {
+        if (!debugLogging) {
+            return
+        }
+        print('[networkMonitor] ' + msg)
+    }
+    
     onMaxAllowedHeightChanged: {
         setItemSize()
     }
@@ -147,16 +156,16 @@ Item {
     }
     
     function reloadComponent() {
-        print('[networkMonitor] completed')
-        print('[networkMonitor] systemmonitorDS:')
+        dbgprint('completed')
+        dbgprint('systemmonitorDS:')
         systemmonitorDS.sources.forEach(function (source) {
-            print('[networkMonitor]   ' + source)
+            dbgprint('  ' + source)
             sourceAddedOrRemoved(source, true)
         })
-        print('[networkMonitor] connectionModel:')
+        dbgprint('connectionModel:')
         for (var i = 0; i < connectionModel.count; i++) {
             var obj = connectionModel.get(i)
-            print('[networkMonitor]   ' + obj.DeviceName + ', ' + obj.ConnectionIcon + ', ' + obj.ConnectionState + ', ' + i)
+            dbgprint('  ' + obj.DeviceName + ', ' + obj.ConnectionIcon + ', ' + obj.ConnectionState + ', ' + i)
         }
         devicesChanged()
     }
