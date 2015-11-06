@@ -18,6 +18,7 @@ import QtQuick 2.2
 import QtQuick.Layouts 1.1
 import QtGraphicalEffects 1.0
 import org.kde.plasma.core 2.0 as PlasmaCore
+import org.kde.plasma.components 2.0 as PlasmaComponents
 import "../code/helper.js" as Helper
 
 
@@ -29,53 +30,17 @@ Item {
     
     property int oneLineMargin: 5
     
-    property double fontPointSize: height * 0.195 * (main.layoutType === 0 ? 1 : main.layoutType === 1 ? 1.25 : main.layoutType === 2 ? 1.75 : 3.25)
+    property double fontPointSize: height * 0.2 * (main.layoutType === 0 ? 1 : main.layoutType === 1 ? 1.4 : main.layoutType === 2 ? 1.85 : 3.6)
     property int graphGranularity: 20 * main.itemAspectRatio
     property bool noConnection: DeviceName === '_'
     
     property bool ddwrtConnection: DeviceName === 'DD-WRT'
 
     function formatBytes(bytes) {
-        var localBytes = bytes;
-        var suffix = 'B';
-        if (localBytes >= 1024) {
-            localBytes = localBytes / 1024;
-            suffix = 'K';
-        } else {
-            return formatSize(localBytes, suffix);
+        if (showBits) {
+            return Helper.transformNumber(bytes * 8, 1000, 3, ['b', 'k', 'm', 'g', 't', 'p'])
         }
-        if (localBytes >= 1024) {
-            localBytes = localBytes / 1024;
-            suffix = 'M';
-        } else {
-            return formatSize(localBytes, suffix);
-        }
-        if (localBytes >= 1024) {
-            localBytes = localBytes / 1024;
-            suffix = 'G';
-        } else {
-            return formatSize(localBytes, suffix);
-        }
-        if (localBytes >= 1024) {
-            localBytes = localBytes / 1024;
-            suffix = 'T';
-        } else {
-            return formatSize(localBytes, suffix);
-        }
-        return formatSize(localBytes, suffix);
-    }
-    
-    function formatSize(size, suffix) {
-        var localSizeInt = parseInt(size);
-        var resultStr = String(localSizeInt);
-        if (localSizeInt < 1000 && suffix !== 'B' && size > localSizeInt) {
-            var decimal = parseInt((size * 10) - (localSizeInt * 10));
-            if (decimal > 0) {
-                resultStr += '.';
-                resultStr += decimal;
-            }
-        }
-        return resultStr + suffix;
+        return Helper.transformNumber(bytes, 1024, 3, ['B', 'K', 'M', 'G', 'T', 'P'])
     }
     
     ListModel {
@@ -189,7 +154,6 @@ Item {
     }
     
     FastBlur {
-        //anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: (parent.width - width) / 2 + (main.layoutType === 3 ? width / 2 + oneLineMargin : 0)
@@ -215,14 +179,15 @@ Item {
         visible: !noConnection && historyGraphsEnabled
     }
     
-    Text {
+    PlasmaComponents.Label {
         id: deviceNameText
         text: DeviceName
         
         anchors.top: parent.top
         anchors.left: parent.left
         
-        color: theme.textColor
+        verticalAlignment: Text.AlignTop
+        
         opacity: 0.9
         
         font.italic: true
@@ -243,52 +208,50 @@ Item {
         
         visible: !noConnection
         
-        Text {
+        PlasmaComponents.Label {
             id: uploadIcon
             anchors {
                 left: parent.left
-                top: parent.top
+                verticalCenter: parent.verticalCenter
+                verticalCenterOffset: main.layoutType === 3 ? 0 : - fontPointSize * 0.75
             }
             text: '⬆'
-            color: theme.textColor
             font.pointSize: fontPointSize
             visible: main.layoutType === 0
         }
         
-        Text {
+        PlasmaComponents.Label {
             id: connectionSpeedUpload
             anchors {
                 right: parent.right
                 verticalCenter: parent.verticalCenter
-                verticalCenterOffset: main.layoutType === 3 ? 0 : - (parent.height - fontPointSize * 1.8) / 2 
+                verticalCenterOffset: uploadIcon.anchors.verticalCenterOffset
             }
             text: '_'
-            color: theme.textColor
             font.pointSize: fontPointSize
         }
         
-        Text {
+        PlasmaComponents.Label {
             id: downloadIcon
             anchors {
                 left: parent.left
-                bottom: parent.bottom
+                verticalCenter: parent.verticalCenter
+                verticalCenterOffset: -uploadIcon.anchors.verticalCenterOffset
             }
             text: '⬇'
-            color: theme.textColor
             font.pointSize: fontPointSize
             visible: main.layoutType === 0
         }
         
-        Text {
+        PlasmaComponents.Label {
             id: connectionSpeedDownload
             anchors {
                 right: parent.right
                 rightMargin: main.layoutType === 3 ? parent.width / 2 - oneLineMargin : 0
                 verticalCenter: parent.verticalCenter
-                verticalCenterOffset: main.layoutType === 3 ? 0 : (parent.height - fontPointSize * 1.8) / 2
+                verticalCenterOffset: -uploadIcon.anchors.verticalCenterOffset
             }
             text: '_'
-            color: theme.textColor
             font.pointSize: fontPointSize
         }
     }

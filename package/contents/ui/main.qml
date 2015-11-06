@@ -43,6 +43,7 @@ Item {
     property bool historyGraphsEnabled: plasmoid.configuration.historyGraphsEnabled
     // 0 - full view, 1 - no device names, 2 - big numbers, 3 - one line
     property int layoutType: plasmoid.configuration.layoutType
+    property bool showBits: plasmoid.configuration.showBits
 
     //
     // sizing and spacing
@@ -52,7 +53,7 @@ Item {
     property double baseSizeMultiplier: plasmoid.configuration.baseSizeMultiplier
     property int itemMargin: 5
     
-    property double itemAspectRatio: layoutType === 2 ? 4/3 : layoutType === 3 ? 13/2 : 1
+    property double itemAspectRatio: layoutType === 2 ? 4/3 : layoutType === 3 ? 12/2 : 1
     
     property double parentWidth: parent === null ? 0 : parent.width
     property double parentHeight: parent === null ? 0 : parent.height

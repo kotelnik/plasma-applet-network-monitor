@@ -8,6 +8,7 @@ Item {
 
     property alias cfg_updateInterval: updateIntervalSpinBox.value
     property alias cfg_historyGraphsEnabled: historyGraphsEnabled.checked
+    property alias cfg_showBits: showBits.checked
 
     GridLayout {
         Layout.fillWidth: true
@@ -41,6 +42,12 @@ Item {
             width: 2
             height: 10
             Layout.columnSpan: 2
+        }
+        
+        CheckBox {
+            id: showBits
+            Layout.columnSpan: 2
+            text: i18n('Show bits')
         }
         
     }

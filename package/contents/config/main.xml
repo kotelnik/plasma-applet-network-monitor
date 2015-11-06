@@ -12,6 +12,9 @@
         <entry name="historyGraphsEnabled" type="Bool">
             <default>true</default>
         </entry>
+        <entry name="showBits" type="Bool">
+            <default>false</default>
+        </entry>
     </group>
     
     <group name="Filter">

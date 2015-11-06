@@ -98,3 +98,31 @@ function recalculate(model, oldMaxBytes) {
     }
 }
 
+
+function transformNumber(sourceNumber, peak, maxLength, suffixes) {
+    
+    var lengthLimitNumber = Math.pow(10, maxLength)
+    
+    var number = sourceNumber
+    
+    var suffixIndex = 0
+    
+    while (number >= lengthLimitNumber || number >= peak) {
+        number /= peak
+        suffixIndex++
+    }
+    
+    // now we have result number -> we need to round it right:
+    var numberForRounding = number
+    var roundingDivider = 1
+    var limitForRounding = lengthLimitNumber / 10
+    while (numberForRounding < limitForRounding && numberForRounding > 0) {
+        numberForRounding *= 10
+        roundingDivider *= 10
+    }
+    
+    var resultNumberStr = (Math.round(numberForRounding) / roundingDivider).toString()
+    
+    return resultNumberStr + suffixes[suffixIndex]
+    
+}
