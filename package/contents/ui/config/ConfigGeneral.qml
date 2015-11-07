@@ -47,7 +47,7 @@ Item {
         CheckBox {
             id: showBits
             Layout.columnSpan: 2
-            text: i18n('Show bits')
+            text: i18n('Speed in bits')
         }
         
     }
