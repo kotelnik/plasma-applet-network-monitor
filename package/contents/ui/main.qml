@@ -57,7 +57,7 @@ Item {
     property int showUploadDownload: plasmoid.configuration.showUploadDownload
     property bool hideDownload: showUploadDownload === 2
     property bool hideUpload: showUploadDownload === 1
-    property double itemAspectRatio: layoutType === 2 ? 4/3 : layoutType === 3 ? (showUploadDownload === 0 ? 6 : 3) : 1
+    property double itemAspectRatio: layoutType === 2 ? 4/3 : layoutType === 3 ? (showUploadDownload === 0 ? 6.25 : 3) : 1
     
     property double parentWidth: parent === null ? 0 : parent.width
     property double parentHeight: parent === null ? 0 : parent.height
