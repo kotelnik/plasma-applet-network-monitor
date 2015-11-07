@@ -10,6 +10,7 @@ Item {
     property alias cfg_iconBlur: iconBlur.value
     property int cfg_layoutType
     property alias cfg_baseSizeMultiplier: baseSizeMultiplier.value
+    property alias cfg_showUploadDownload: showUploadDownload.currentIndex
     
     onCfg_layoutTypeChanged: {
         switch (cfg_layoutType) {
@@ -39,12 +40,12 @@ Item {
 
     GridLayout {
         Layout.fillWidth: true
-        columns: 2
+        columns: 3
         
         Label {
             text: i18n('Icon opacity:')
             Layout.alignment: Qt.AlignVCenter|Qt.AlignLeft
-            Layout.columnSpan: 2
+            Layout.columnSpan: 3
         }
         Slider {
             id: iconOpacity
@@ -52,13 +53,13 @@ Item {
             minimumValue: 0
             tickmarksEnabled: true
             width: parent.width
-            Layout.columnSpan: 2
+            Layout.columnSpan: 3
         }
         
         Label {
             text: i18n('Icon blur:')
             Layout.alignment: Qt.AlignVCenter|Qt.AlignLeft
-            Layout.columnSpan: 2
+            Layout.columnSpan: 3
         }
         Slider {
             id: iconBlur
@@ -66,13 +67,13 @@ Item {
             minimumValue: 0
             maximumValue: 20
             width: parent.width
-            Layout.columnSpan: 2
+            Layout.columnSpan: 3
         }
 
         Item {
             width: 2
             height: 10
-            Layout.columnSpan: 2
+            Layout.columnSpan: 3
         }
         
         Label {
@@ -84,6 +85,7 @@ Item {
             exclusiveGroup: layoutTypeGroup
             text: i18n("Full view")
             onCheckedChanged: if (checked) cfg_layoutType = 0;
+            Layout.columnSpan: 2
         }
         Item {
             width: 2
@@ -95,12 +97,14 @@ Item {
             exclusiveGroup: layoutTypeGroup
             text: i18n("No device names")
             onCheckedChanged: if (checked) cfg_layoutType = 1;
+            Layout.columnSpan: 2
         }
         RadioButton {
             id: layoutTypeRadioBigNumbers
             exclusiveGroup: layoutTypeGroup
             text: i18n("Big numbers")
             onCheckedChanged: if (checked) cfg_layoutType = 2;
+            Layout.columnSpan: 2
         }
         RadioButton {
             id: layoutTypeRadioOneLine
@@ -108,11 +112,17 @@ Item {
             text: i18n("One line")
             onCheckedChanged: if (checked) cfg_layoutType = 3;
         }
+        ComboBox {
+            id: showUploadDownload
+            Layout.preferredWidth: 170
+            model: ['Download and upload', 'Download only', 'Upload only']
+            enabled: layoutTypeRadioOneLine.checked
+        }
         
         Item {
             width: 2
             height: 10
-            Layout.columnSpan: 2
+            Layout.columnSpan: 3
         }
         
         Label {
@@ -125,6 +135,7 @@ Item {
             stepSize: 0.1
             minimumValue: 0.01
             maximumValue: 50
+            Layout.columnSpan: 2
         }
         
     }

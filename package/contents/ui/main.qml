@@ -53,7 +53,11 @@ Item {
     property double baseSizeMultiplier: plasmoid.configuration.baseSizeMultiplier
     property int itemMargin: 5
     
-    property double itemAspectRatio: layoutType === 2 ? 4/3 : layoutType === 3 ? 12/2 : 1
+    // 0 - both, 1 - only download, 2 - only upload
+    property int showUploadDownload: plasmoid.configuration.showUploadDownload
+    property bool hideDownload: showUploadDownload === 2
+    property bool hideUpload: showUploadDownload === 1
+    property double itemAspectRatio: layoutType === 2 ? 4/3 : layoutType === 3 ? (showUploadDownload === 0 ? 6 : 3) : 1
     
     property double parentWidth: parent === null ? 0 : parent.width
     property double parentHeight: parent === null ? 0 : parent.height

@@ -229,6 +229,7 @@ Item {
             }
             text: '_'
             font.pointSize: fontPointSize
+            visible: main.layoutType !== 3 || !hideUpload
         }
         
         PlasmaComponents.Label {
@@ -247,12 +248,13 @@ Item {
             id: connectionSpeedDownload
             anchors {
                 right: parent.right
-                rightMargin: main.layoutType === 3 ? parent.width / 2 - oneLineMargin : 0
+                rightMargin: (main.layoutType === 3 && !hideUpload) ? parent.width / 2 - oneLineMargin : 0
                 verticalCenter: parent.verticalCenter
                 verticalCenterOffset: -uploadIcon.anchors.verticalCenterOffset
             }
             text: '_'
             font.pointSize: fontPointSize
+            visible: main.layoutType !== 3 || !hideDownload
         }
     }
     
