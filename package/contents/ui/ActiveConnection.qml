@@ -30,7 +30,7 @@ Item {
     
     property int oneLineMargin: 5
     
-    property double fontPointSize: height * 0.2 * (main.layoutType === 0 ? 1 : main.layoutType === 1 ? 1.4 : main.layoutType === 2 ? 1.85 : 3.6)
+    property double fontPixelSize: height * 0.26 * (main.layoutType === 0 ? 1 : main.layoutType === 1 ? 1.4 : main.layoutType === 2 ? 1.85 : 3.6)
     property int graphGranularity: 20 * main.itemAspectRatio
     property bool noConnection: DeviceName === '_'
     
@@ -191,7 +191,7 @@ Item {
         opacity: 0.9
         
         font.italic: true
-        font.pointSize: fontPointSize
+        font.pixelSize: fontPixelSize
         
         scale: paintedWidth > parent.width ? (parent.width / paintedWidth) : 1
         transformOrigin: Item.Left
@@ -213,10 +213,10 @@ Item {
             anchors {
                 left: parent.left
                 verticalCenter: parent.verticalCenter
-                verticalCenterOffset: main.layoutType === 3 ? 0 : - fontPointSize * 0.75
+                verticalCenterOffset: main.layoutType === 3 ? 0 : - fontPixelSize * 0.58
             }
             text: '⬆'
-            font.pointSize: fontPointSize
+            font.pixelSize: fontPixelSize
             visible: main.layoutType === 0
         }
         
@@ -228,7 +228,7 @@ Item {
                 verticalCenterOffset: uploadIcon.anchors.verticalCenterOffset
             }
             text: '_'
-            font.pointSize: fontPointSize
+            font.pixelSize: fontPixelSize
             visible: main.layoutType !== 3 || !hideUpload
         }
         
@@ -240,7 +240,7 @@ Item {
                 verticalCenterOffset: -uploadIcon.anchors.verticalCenterOffset
             }
             text: '⬇'
-            font.pointSize: fontPointSize
+            font.pixelSize: fontPixelSize
             visible: main.layoutType === 0
         }
         
@@ -253,7 +253,7 @@ Item {
                 verticalCenterOffset: -uploadIcon.anchors.verticalCenterOffset
             }
             text: '_'
-            font.pointSize: fontPointSize
+            font.pixelSize: fontPixelSize
             visible: main.layoutType !== 3 || !hideDownload
         }
     }
