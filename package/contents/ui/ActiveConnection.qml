@@ -30,7 +30,7 @@ Item {
     
     property int oneLineMargin: 5
     
-    property double fontPixelSize: height * 0.26 * (main.layoutType === 0 ? 1 : main.layoutType === 1 ? 1.4 : main.layoutType === 2 ? 1.85 : 3.6)
+    property double fontPixelSize: height * 0.27 * (main.layoutType === 0 ? 1 : main.layoutType === 1 ? 1.4 : main.layoutType === 2 ? 1.85 : 3.6)
     property int graphGranularity: 20 * main.itemAspectRatio
     property bool noConnection: DeviceName === '_'
     
@@ -38,7 +38,7 @@ Item {
 
     function formatBytes(bytes) {
         if (showBits) {
-            return Helper.transformNumber(bytes * 8, 1000, 3, ['b', 'k', 'm', 'g', 't', 'p'])
+            return Helper.transformNumber(bytes * 8, 1000, 3, ['b', 'K', 'M', 'G', 'T', 'P'])
         }
         return Helper.transformNumber(bytes, 1024, 3, ['B', 'K', 'M', 'G', 'T', 'P'])
     }
