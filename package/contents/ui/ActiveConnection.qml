@@ -109,8 +109,8 @@ Item {
             return
         }
         
-        Helper.addSpeedData(downBytes, downloadHistoryGraphModel, graphGranularity, main.itemHeight, 1)
-        Helper.addSpeedData(upBytes, uploadHistoryGraphModel, graphGranularity, main.itemHeight, uploadHistoryGraphModel.maxBytes === 0 ? 1 : uploadHistoryGraphModel.maxBytes / downloadHistoryGraphModel.maxBytes)
+        Helper.addSpeedData(downBytes, downloadHistoryGraphModel, graphGranularity, 1)
+        Helper.addSpeedData(upBytes, uploadHistoryGraphModel, graphGranularity, uploadHistoryGraphModel.maxBytes === 0 ? 1 : uploadHistoryGraphModel.maxBytes / downloadHistoryGraphModel.maxBytes)
     }
     
     Timer {
@@ -201,10 +201,12 @@ Item {
     
     Item {
         id: speedsContainer
-        width: parent.width
+        //width: parent.width
         height: parent.height * (main.layoutType === 0 ? (2/3) : main.layoutType === 1 ? 0.8 : 1)
         anchors.bottom: parent.bottom
         anchors.bottomMargin: main.layoutType !== 1 ? 0 : parent.height * 0.1
+        anchors.left: parent.left
+        anchors.right: parent.right
         
         visible: !noConnection
         

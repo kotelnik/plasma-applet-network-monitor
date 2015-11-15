@@ -19,8 +19,7 @@ import QtQuick 2.2
 Item {
     id: historyGraph
     
-    width: parent.width
-    height: parent.height
+    anchors.fill: parent
     
     property var listViewModel
     property color barColor
@@ -35,21 +34,13 @@ Item {
         
         model: listViewModel
         
-        delegate: Item {
-            
-            property double rectHeight: graphItemHeight
-            
+        delegate: Rectangle {
             width: historyGraph.width / graphGranularity
-            height: historyGraph.height
-            
-            Rectangle {
-                width: parent.width
-                height: rectHeight
-                x: 0
-                y: parent.height - height
-                color: barColor
-                radius: 3
-            }
+            height: historyGraph.height * graphItemPercent
+            x: 0
+            y: parent.height - height
+            color: barColor
+            radius: 3
         }
     }
     

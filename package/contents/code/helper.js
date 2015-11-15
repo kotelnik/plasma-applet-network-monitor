@@ -8,13 +8,16 @@ var SpeedType = {
 }
 
 
-function addSpeedData(speed, model, graphGranularity, itemHeight, scaleCoeficient) {
+function addSpeedData(speed, model, graphGranularity, scaleCoeficient) {
     
     // initial fill up
+    while (model.count > graphGranularity) {
+        model.remove(0, model.count - graphGranularity)
+    }
     while (model.count < graphGranularity) {
-        model.append({
+        model.insert(0, {
             'speed': 0,
-            'graphItemHeight': 0
+            'graphItemPercent': 0
         })
     }
     
@@ -28,11 +31,10 @@ function addSpeedData(speed, model, graphGranularity, itemHeight, scaleCoeficien
     }
     
     var nextHistory = model.maxBytes <= 0 ? 0 : speed / model.maxBytes
-    nextHistory = nextHistory * itemHeight
     
     var newItem = {
         'speed': speed,
-        'graphItemHeight': nextHistory * scaleCoeficient
+        'graphItemPercent': nextHistory * scaleCoeficient
     }
     
     model.append(newItem)
@@ -93,8 +95,8 @@ function recalculate(model, oldMaxBytes) {
     
     var recalculateNumber = oldMaxBytes / model.maxBytes
     for (var i = 0; i < model.count; i++) {
-        var itemHeight = model.get(i).graphItemHeight
-        model.setProperty(i, 'graphItemHeight', itemHeight * recalculateNumber)
+        var itemPercent = model.get(i).graphItemPercent
+        model.setProperty(i, 'graphItemPercent', itemPercent * recalculateNumber)
     }
 }
 
