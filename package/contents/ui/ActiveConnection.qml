@@ -192,6 +192,7 @@ Item {
         
         font.italic: true
         font.pixelSize: fontPixelSize
+        font.pointSize: -1
         
         scale: paintedWidth > parent.width ? (parent.width / paintedWidth) : 1
         transformOrigin: Item.Left
@@ -219,6 +220,7 @@ Item {
             }
             text: '⬆'
             font.pixelSize: fontPixelSize
+            font.pointSize: -1
             visible: main.layoutType === 0
         }
         
@@ -231,6 +233,7 @@ Item {
             }
             text: '_'
             font.pixelSize: fontPixelSize
+            font.pointSize: -1
             visible: main.layoutType !== 3 || !hideUpload
         }
         
@@ -243,6 +246,7 @@ Item {
             }
             text: '⬇'
             font.pixelSize: fontPixelSize
+            font.pointSize: -1
             visible: main.layoutType === 0
         }
         
@@ -256,6 +260,7 @@ Item {
             }
             text: '_'
             font.pixelSize: fontPixelSize
+            font.pointSize: -1
             visible: main.layoutType !== 3 || !hideDownload
         }
     }

@@ -149,7 +149,7 @@ Item {
             DevicesModelHelper.setConnectionState(connectionModel, sourceName, data.stdout)
         }
         
-        interval: 1000
+        interval: 1500
     }
     
     function sourceAddedOrRemoved(source, added) {
