@@ -3,15 +3,17 @@ import QtQuick.Controls 1.3
 import QtQuick.Layouts 1.1
 
 Item {
-    width: childrenRect.width
-    height: childrenRect.height
-
+    
     property alias cfg_updateInterval: updateIntervalSpinBox.value
     property alias cfg_historyGraphsEnabled: historyGraphsEnabled.checked
     property alias cfg_showBits: showBits.checked
+    
+    Label {
+        text: i18n('Plasmoid version: ') + '1.7.3'
+        anchors.right: parent.right
+    }
 
     GridLayout {
-        Layout.fillWidth: true
         columns: 2
 
         Label {

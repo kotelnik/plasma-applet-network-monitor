@@ -17,10 +17,10 @@ function tryAddOrRemoveConnection(devicesModel, source, executableDS, added) {
     
     if (added) {
         dbgprint('ADDED: ' + deviceName)
-        DevicesModelHelper.addConnection(devicesModel, deviceName, executableDS)
+        addConnection(devicesModel, deviceName, executableDS)
     } else {
         dbgprint('REMOVED: ' + deviceName)
-        DevicesModelHelper.removeConnection(devicesModel, deviceName, executableDS)
+        removeConnection(devicesModel, deviceName, executableDS)
     }
 }
 
@@ -76,6 +76,7 @@ function setConnectionState(devicesModel, cmdSource, state) {
     if (devicesModelIndex >= 0) {
         var oldValue = devicesModel.get(devicesModelIndex).ConnectionState
         var newValue = determineConnectedFromString(state)
+        dbgprint('  oldValue=' + oldValue + ', newValue=' + newValue)
         
         devicesModel.setProperty(devicesModelIndex, 'ConnectionState', newValue)
         

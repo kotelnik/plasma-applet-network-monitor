@@ -140,8 +140,6 @@ Item {
         id: executableDS
         engine: 'executable'
         
-        connectedSources: []
-        
         onNewData: {
             if (data['exit code'] > 0) {
                 return
