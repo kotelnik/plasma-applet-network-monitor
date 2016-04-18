@@ -19,7 +19,7 @@ ConfigModel {
     }
     ConfigCategory {
          name: i18n('DD-WRT')
-         icon: Qt.resolvedUrl('../images/dd-wrt.png')
+         icon: Qt.resolvedUrl('../images/dd-wrt.png').replace('file://', '')
          source: 'config/ConfigDDWRT.qml'
     }
 }
