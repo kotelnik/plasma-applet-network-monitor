@@ -24,6 +24,7 @@ Item {
     id: main
     
     // general settings
+    property bool inStart: true
     property bool showLo: plasmoid.configuration.showLo
     property bool showDdWrt: plasmoid.configuration.showDdWrt
     property double updateInterval: plasmoid.configuration.updateInterval * 1000
@@ -155,7 +156,8 @@ Item {
     }
     
     Component.onCompleted: {
-        reloadComponent()
+        reloadComponent();
+        inStart = false;
     }
     
     function reloadComponent() {
@@ -232,8 +234,15 @@ Item {
         setItemSize()
     }
     
-    onShowLoChanged: devicesChanged()
-    onShowDdWrtChanged: devicesChanged()
+    onShowLoChanged: {
+        if (!inStart)
+            devicesChanged();
+    }
+    
+    onShowDdWrtChanged: {
+        if (!inStart)
+            devicesChanged();
+    }
 
     GridLayout {
         columns: gridColumns
@@ -247,7 +256,7 @@ Item {
         Layout.preferredHeight: height
         
         Repeater {
-            model: networkDevicesModel
+            model: inStart ? 0 : networkDevicesModel
             delegate: ActiveConnection {
                 Layout.preferredWidth: itemWidth
                 Layout.preferredHeight: itemHeight
