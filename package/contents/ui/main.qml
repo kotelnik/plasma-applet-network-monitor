@@ -93,17 +93,11 @@ Item {
         print('[networkMonitor] ' + msg)
     }
     
-    onMaxAllowedHeightChanged: {
-        setItemSize()
-    }
+    onMaxAllowedHeightChanged: setItemSize()
     
-    onMaxAllowedWidthChanged: {
-        setItemSize()
-    }
+    onMaxAllowedWidthChanged: setItemSize()
     
-    onPreMaxBaseWidthChanged: {
-        setItemSize()
-    }
+    onPreMaxBaseWidthChanged: setItemSize()
     
     function setItemSize() {
         maxBaseWidth = vertical ? Math.min(preMaxBaseWidth, maxAllowedWidth) : Math.min(preMaxBaseWidth, maxAllowedHeight * itemAspectRatio)
@@ -175,9 +169,7 @@ Item {
         devicesChanged()
     }
     
-    onFilterRegExpChanged: {
-        devicesChanged()
-    }
+    onFilterRegExpChanged: devicesChanged()
     
     ListModel {
         id: connectionModel
